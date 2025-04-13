@@ -11,6 +11,17 @@
             else return null;
         }
         
+        public function mGetOrderDuring($start, $end) {
+            $db = new tmdt();
+            $conn = $db->connect();
+            $sql = "SELECT * FROM `order` O JOIN order_detail OD ON O.orderID = OD.orderID JOIN customer C ON C.customerID = O.customerID WHERE O.date BETWEEN '$start' AND '$end' GROUP BY OD.orderID";
+            $result = $conn->query($sql);
+            
+            if ($result->num_rows > 0)
+                return $result;
+            else return null;
+        }
+        
         public function mInsertOrder($userID, $customerID, $finalPrice) {
             $db = new tmdt();
             $conn = $db->connect();

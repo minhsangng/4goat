@@ -6,6 +6,12 @@
             } else return 0;
         }
         
+        public function cGetOrderDuring($start, $end) {
+            if ($this->mGetOrderDuring($start, $end) != null) {
+                return $this->mGetOrderDuring($start, $end);
+            } else return 0;
+        }
+        
         public function cInsertOrder($userID, $customerID, $finalPrice) {
             return $this->mInsertOrder($userID, $customerID, $finalPrice);
         }

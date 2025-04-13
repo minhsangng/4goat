@@ -5,12 +5,15 @@ session_start();
 include_once("../../../model/connect.php");
 include_once("../../../model/mLogin.php");
 include_once("../../../model/mOrder.php");
+include_once("../../../model/mPost.php");
 
 include_once("../../../controller/cLogin.php");
 include_once("../../../controller/cOrder.php");
+include_once("../../../controller/cPost.php");
 
 $ctrlLogin = new cLogin();
 $ctrlOrder = new cOrder();
+$ctrlPost = new cPost();
 
 if ($ctrlLogin->cConfirmLogin($_SESSION["user"][0], $_SESSION["user"][1]) != 1)
 echo "<script>window.location.href='../login/';</script>";

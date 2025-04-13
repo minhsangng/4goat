@@ -12,9 +12,21 @@
             } else return 0;
         }
         
+        public function cGetProductSortPrice($sort, $sex, $limit, $offset) {
+            if ($this->mGetProductSortPrice($sort, $sex, $limit, $offset) != null) {
+                return $this->mGetProductSortPrice($sort, $sex, $limit, $offset);
+            } else return 0;
+        }
+        
         public function cGetProductByID($productID) {
             if ($this->mGetProductByID($productID) != null) {
                 return $this->mGetProductByID($productID);
+            } else return 0;
+        }
+        
+        public function cGetProductByPrice($sex, $min, $max) {
+            if ($this->mGetProductByPrice($sex, $min, $max) != null) {
+                return $this->mGetProductByPrice($sex, $min, $max);
             } else return 0;
         }
         
@@ -24,9 +36,21 @@
             } else return 0;
         }
         
+        public function cGetProductBySexOnCategory($sex, $categoryID) {
+            if ($this->mGetProductBySexOnCategory($sex, $categoryID) != null) {
+                return $this->mGetProductBySexOnCategory($sex, $categoryID);
+            } else return 0;
+        }
+        
         public function cGetAllCategory() {
             if ($this->mGetAllCategory() != null) {
                 return $this->mGetAllCategory();
+            } else return 0;
+        }
+        
+        public function cGetCategoryByID($categoryID) {
+            if ($this->mGetCategoryByID($categoryID) != null) {
+                return $this->mGetCategoryByID($categoryID);
             } else return 0;
         }
         

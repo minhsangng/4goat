@@ -1,9 +1,9 @@
 <?php
-    class mUser {
-        public function mGetAllUser() {
+    class mPost{
+        public function mGetAllPost() {
             $db = new tmdt();
             $conn = $db->connect();
-            $sql = "SELECT * FROM user";
+            $sql = "SELECT * FROM post";
             $result = $conn->query($sql);
             
             if ($result->num_rows > 0)
@@ -11,14 +11,15 @@
             else return null;
         }
         
-        public function mInsertUser($userName, $phoneNumber, $email, $password, $role) {
+        public function mInsertPost($userID, $content, $date, $topic, $keyword) {
             $db = new tmdt();
             $conn = $db->connect();
-            $sql = "INSERT INTO user (userName, phoneNumber, email, password, role) VALUES ($userName, $phoneNumber, $email, $password, $role)";
+            $sql = "INSERT INTO post (userID, content, date, topic, keyword) VALUES ($userID, '$content', '$date', '$topic', '$keyword')";
             $result = $conn->query($sql);
             
             if (!$result)
-                return 0;
+                return false;
+            else return true;
         }
     }
 ?>

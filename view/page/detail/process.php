@@ -22,6 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION["selected"] = ["id" => $productID, "color" => $color, "size" => $size];
 
         echo json_encode(["status" => "success", "selected" => $_SESSION["selected"]]);
+        
         exit;
     } else if (isset($_POST["cartID"]) && isset($_POST["quantity"])) {
         $cartID = (int) $_POST["cartID"];
@@ -45,11 +46,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $customerID = $_SESSION["customer"][2];
         $productID = $_POST["productID"];
 
-        $resultWishList = $ctrlWishList->cDeleteWishList($productID, $customerID);
+        if ($_POST["action"] == "wishlist") {
+            $resultWishList = $ctrlWishList->cDeleteWishList($productID, $customerID);
 
-        echo json_encode(["status" => "success", "productID" => $productID]);
-        
-        exit();
+            echo json_encode(["status" => "success", "productID" => $productID]);
+
+            exit();
+        } else if ($_POST["action"] == "del") {
+            $cartID = $_POST["cartID"];
+            
+            $resultCart = $ctrlCart->cDeleteCartByID($productID, $cartID);
+
+            echo json_encode(["status" => "success", "cartID" => $cartID]);
+
+            exit();
+        }
     }
 }
 ?>

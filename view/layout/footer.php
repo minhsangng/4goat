@@ -12,7 +12,7 @@
                     <div class="footer-intro mb-10">
                         <a href="" class="relative">
                             <img src="src/images/logo.png" width="80" alt="4Goat - Logo">
-                            <h1 class="absolute -bottom-7 mt-[25px] my-0 left-8 text-[3rem]!">4GOAT</h1>
+                            <h1 class="absolute -bottom-6 mt-[25px] my-0 left-10 text-[3rem]!">4GOAT</h1>
                         </a>
                     </div>
                     <p class="text-justify">Chúng tôi mang đến cho bạn những bộ trang phục thời thượng, chất lượng cao

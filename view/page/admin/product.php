@@ -13,13 +13,13 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Tên sản phẩm</label>
-                                    <input class="form-control" type="text" value="">
+                                    <input class="form-control" type="text" name="name" value="">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Danh mục</label>
-                                    <select class="form-control">
+                                    <select class="form-control" name="category">
                                         <option value="" selected hidden></option>
                                         <option value="">Áo thun</option>
                                         <option value="">Áo sơ mi</option>
@@ -32,13 +32,13 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Thương hiệu</label>
-                                    <input class="form-control" type="text" value="">
+                                    <input class="form-control" type="text" name="brand" value="">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Bộ sưu tập</label>
-                                    <select class="form-control">
+                                    <select class="form-control" name="collection">
                                         <option value="" selected hidden></option>
                                         <option value="">Spring</option>
                                         <option value="">Summer</option>
@@ -52,13 +52,13 @@
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Dành cho</label> <br>
                                     <div class="flex items-center input-group-text">
-                                        <input
+                                        <input name="sex"
                                             class="form-check-input checked:border-blue-400! border-2! border-blue-100! mr-2!"
-                                            type="checkbox" value="" id="male"><label for="male"
+                                            type="checkbox" value="0" id="male"><label for="male"
                                             class="mr-4 mb-0">Nam</label>
-                                        <input
+                                        <input name="sex"
                                             class="form-check-input checked:border-blue-400! border-2! border-blue-100! mr-2!"
-                                            type="checkbox" value="" id="female"><label for="female"
+                                            type="checkbox" value="1" id="female"><label for="female"
                                             class="mb-0">Nữ</label>
                                     </div>
                                 </div>
@@ -66,7 +66,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Màu sắc</label>
-                                    <input class="form-control h-10!" type="color" value="">
+                                    <input class="form-control h-10!" type="color" name="color" value="">
                                 </div>
                             </div>
                         </div>
@@ -75,29 +75,35 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Giá bán</label>
-                                    <input class="form-control" type="text" value="">
+                                    <input class="form-control" type="text" name="price" value="">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Hình ảnh</label>
-                                    <input class="form-control" type="file" value="">
+                                    <input class="form-control" type="file" name="file" value="">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="example-text-input" class="form-control-label">Size</label>
-                                    <input class="form-control" type="text" value="">
+                                    <input class="form-control" type="text" name="size" value="">
                                 </div>
                             </div>
                         </div>
                         <hr class="horizontal dark">
                         <div class="row">
                             <div class="col-md-12 text-right">
-                                <button type="submit" class="btn btn-outline-info hover:btn-info">Xác nhận</button>
+                                <button type="submit" name="btnsubmit" class="btn btn-outline-info hover:btn-info">Xác nhận</button>
                             </div>
                         </div>
                     </form>
+                    
+                    <?php
+                        if (isset($_POST["btnsubmit"])) {
+                            
+                        }
+                    ?>
                 </div>
             </div>
         </div>

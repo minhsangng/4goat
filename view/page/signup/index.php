@@ -14,7 +14,7 @@ $ctrl = new cLogin();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập</title>
+    <title>Đăng ký tài khoản</title>
 
     <link rel="shortcut icon" href="../../../src/images/logo.png" type="image/x-icon">
 
@@ -41,7 +41,7 @@ $ctrl = new cLogin();
                     <h2 class="absolute -bottom-4 left-13 text-5xl! text-black! font-[Marcellus] font-normal!">4Goat
                     </h2>
                 </a>
-                <h1 class="mb-4 mt-8!">Đăng nhập</h1>
+                <h1 class="mb-4 mt-8!">Đăng ký</h1>
                 <div>
                     <input type="text" placeholder="Login Name" name="name" id="username" />
                 </div>
@@ -57,11 +57,10 @@ $ctrl = new cLogin();
                 }
                 ?>
                 <div class="mt-2">
-                    <p class="mb-1">Chưa có tài khoản? <a href="../signup/"> Đăng ký</a></p>
-                    <a href="#">Quên mật khẩu?</a>
+                    <p class="mb-1">Đã có tài khoản? <a href="../login/"> Đăng nhập</a></p>
                 </div>
                 <div>
-                    <button type="submit" name="btnlogin">Đăng nhập</button>
+                    <button type="submit" name="btnlogin">Đăng ký</button>
                 </div>
             </form>
             <div class="button">

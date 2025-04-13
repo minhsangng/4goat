@@ -6,7 +6,18 @@ if (isset($_GET["c"]))
 echo "<title>" . $arr_cate[$id] . "</title>";
 ?>
 
-<!-- Collection Section -->
+<style>
+    .star-rating i {
+        transition: color 0.2s;
+        color: #ccc;
+    }
+
+    .star-rating i.hovered,
+    .star-rating i.selected {
+        color: gold;
+    }
+</style>
+
 <section class="bg-white pt-12 pb-6 bg-light">
     <div class="container mx-auto px-4 grid grid-cols-1">
 
@@ -55,11 +66,12 @@ echo "<title>" . $arr_cate[$id] . "</title>";
                 <select name="sort" id="" class="bg-white outline-none px-2 py-1 rounded-sm w-40"
                     onchange="document.getElementById('sortForm').submit()">
                     <option value="" selected hidden>Giá</option>
-                    <option value="desc" <?= ($_POST["sort"] == "desc" ? "selected" : "") ?>>Thấp đến cao</option>
-                    <option value="asc" <?= ($_POST["sort"] == "asc" ? "selected" : "") ?>>Cao đến thấp</option>
+                    <option value="ASC" <?= ($_POST["sort"] == "ASC" ? "selected" : "") ?>>Thấp đến cao</option>
+                    <option value="DESC" <?= ($_POST["sort"] == "DESC" ? "selected" : "") ?>>Cao đến thấp</option>
                 </select>
             </form>
         </div>
+        
         <div class="flex justify-between">
             <div class="w-2/10 pr-2">
                 <h3 class="pb-3 border-b-2 border-[#DDD] text-2xl! font-bold! flex items-center"><ion-icon
@@ -74,7 +86,7 @@ echo "<title>" . $arr_cate[$id] . "</title>";
 
                 if ($result != 0) {
                     while ($row = $result->fetch_assoc()) {
-                        echo '<li class="mb-1"><a href="">' . $row["categoryName"] . '</a></li>';
+                        echo '<li class="mb-1"><a href="index.php?p=shop&c=' . $id . '&cate=' . $row["categoryID"] . '">' . $row["categoryName"] . '</a></li>';
                     }
                 }
 
@@ -89,73 +101,115 @@ echo "<title>" . $arr_cate[$id] . "</title>";
                     <h4 class="text-lg! text-[#8c907e]! font-bold!"><ion-icon name="arrow-redo-outline"
                             class="mr-2"></ion-icon>Khoảng giá</h4>
                     <div class="flex justify-between items-center w-full mb-3">
-                        <input type="number" name="minprice" id="" min="0" placeholder="Từ"
+                        <input type="number" name="minPrice" id="" min="0" placeholder="Từ"
+                            value="<?= $_POST["minPrice"] ?>"
                             class="bg-white px-2 py-1 rounded-sm w-28 border-2 border-[#DDD]">
-                        <input type="number" name="maxprice" id="" min="0" placeholder="Đến"
+                        <input type="number" name="maxPrice" id="" min="0" placeholder="Đến"
+                            value="<?= $_POST["maxPrice"] ?>"
                             class="bg-white px-2 py-1 rounded-sm w-28 border-2 border-[#DDD]">
                     </div>
 
                     <h4 class="text-lg! text-[#8c907e]! font-bold!"><ion-icon name="arrow-redo-outline"
                             class="mr-2"></ion-icon>Đánh giá</h4>
-                    <div class="flex justify-around items-center text-2xl text-gray-400 mb-3">
-                        <i class="fa-regular fa-star cursor-pointer" onclick="toggleAdd(this)"></i>
-                        <i class="fa-regular fa-star cursor-pointer" onclick="toggleAdd(this)"></i>
-                        <i class="fa-regular fa-star cursor-pointer" onclick="toggleAdd(this)"></i>
-                        <i class="fa-regular fa-star cursor-pointer" onclick="toggleAdd(this)"></i>
-                        <i class="fa-regular fa-star cursor-pointer" onclick="toggleAdd(this)"></i>
+                    <div class="star-rating flex justify-around items-center text-2xl text-gray-400 mb-3">
+                        <input type="hidden" name="rating" value="" id="rate">
+                        <button type="button"><i class="fa-regular fa-star cursor-pointer" data-index="1"></i></button>
+                        <button type="button"><i class="fa-regular fa-star cursor-pointer" data-index="2"></i></button>
+                        <button type="button"><i class="fa-regular fa-star cursor-pointer" data-index="3"></i></button>
+                        <button type="button"><i class="fa-regular fa-star cursor-pointer" data-index="4"></i></button>
+                        <button type="button"><i class="fa-regular fa-star cursor-pointer" data-index="5"></i></button>
                     </div>
 
                     <button type="submit" name="btnsort"
                         class="btn bg-[#8c907e]! text-white w-full rounded-md! mt-2 uppercase!">Áp dụng</button>
                 </form>
             </div>
+
             <div class="w-8/10 pl-2">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
-                        <li class="breadcrumb-item acive" aria-current="page"><a href="#"><?= $arr_cate["$id"] ?></a>
-                        </li>
+                        <li class="breadcrumb-item <?= (!isset($_GET["cate"]) ? "acive" : "") ?>" aria-current="page"><a
+                                href="index.php?p=shop&c=<?= $id ?>"><?= $arr_cate["$id"] ?></a></li>
+
+                        <?php
+                        if (isset($_GET["cate"])) {
+                            $categoryID = $_GET["cate"];
+                            $result = $ctrlProduct->cGetCategoryByID($categoryID);
+                            $row = $result->fetch_assoc();
+
+                            echo '<li class="breadcrumb-item acive" aria-current="page"><a href="index.php?p=shop&c=' . $id . '&cate=' . $row["categoryID"] . '">' . $row["categoryName"] . '</a></li>';
+                        }
+                        ?>
                     </ol>
                 </nav>
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-2">
                     <?php
-                    $limit = 15;
+                    if (isset($_GET["cate"])) {
+                        $result = $ctrlProduct->cGetProductBySexOnCategory($id, $categoryID);
+                    } else if (isset($_POST["btnsort"])) {
+                        $min = $_POST["minPrice"];
+                        $max = $_POST["maxPrice"];
+                        $rating = $_POST["rating"];
 
-                    $currentPage = isset($_POST["currentPage"]) ? (int) $_POST["currentPage"] : 1;
+                        $result = $ctrlProduct->cGetProductByPrice($id, $min, $max);
+                    } else if (isset($_POST["sort"])) {
+                        $sort = $_POST["sort"];
+                        
+                        $limit = 15;
 
-                    if (isset($_POST["nextPage"])) {
-                        $currentPage++;
+                        $currentPage = isset($_POST["currentPage"]) ? (int) $_POST["currentPage"] : 1;
+
+                        if (isset($_POST["nextPage"])) {
+                            $currentPage++;
+                        }
+
+                        if (isset($_POST["lastPage"]) && $currentPage > 1) {
+                            $currentPage--;
+                        }
+
+                        $offset = ($currentPage - 1) * $limit;
+                        
+                        $result = $ctrlProduct->cGetProductSortPrice($sort, $id, $limit, $offset);
+                    } else {
+                        $limit = 15;
+
+                        $currentPage = isset($_POST["currentPage"]) ? (int) $_POST["currentPage"] : 1;
+
+                        if (isset($_POST["nextPage"])) {
+                            $currentPage++;
+                        }
+
+                        if (isset($_POST["lastPage"]) && $currentPage > 1) {
+                            $currentPage--;
+                        }
+
+                        $offset = ($currentPage - 1) * $limit;
+
+                        $result = $ctrlProduct->cGetProductBySexOnPage($id, $limit, $offset);
                     }
-
-                    if (isset($_POST["lastPage"]) && $currentPage > 1) {
-                        $currentPage--;
-                    }
-
-                    $offset = ($currentPage - 1) * $limit;
-
-                    $result = $ctrlProduct->cGetProductBySexOnPage($id, $limit, $offset);
 
                     if ($result != 0) {
                         while ($row = $result->fetch_assoc()) {
                             echo '<div class="border-1 border-[#DDD] rounded-lg pb-2 cursor-pointer relative">
-                                    <form method="POST">
-                                        <button type="submit" class="absolute top-2 right-2 z-50" name="addwishlist" value="' . $row["productID"] . '"><i class="fa-regular fa-heart text-white text-xl"></i></button>
-                                    </form>
-                                    <a href="index.php?p=detail&id=' . $row["productID"] . '" class="flex flex-col items-center z-40 group-hover:opacity-75">
-                                        <img alt="' . $row["productName"] . '" class="mb-1 w-full h-54 rounded-tl-md rounded-tr-md" src="src/images/products/' . $row["image"] . '_1.png"/>
-                                        <div class="w-full px-2">
-                                            <p class="text-lg mx-0 mb-2 mt-1 h-fit overflow-hidden text-ellipsis whitespace-nowrap">
-                                                ' . $row["productName"] . '
+                                <form method="POST">
+                                    <button type="submit" class="absolute top-2 right-2 z-50" name="addwishlist" value="' . $row["productID"] . '"><i class="fa-regular fa-heart text-white text-xl"></i></button>
+                                </form>
+                                <a href="index.php?p=detail&id=' . $row["productID"] . '" class="flex flex-col items-center z-40 group-hover:opacity-75">
+                                    <img alt="' . $row["productName"] . '" class="mb-1 w-full h-54 rounded-tl-md rounded-tr-md" src="src/images/products/' . $row["image"] . '_1.png"/>
+                                    <div class="w-full px-2">
+                                        <p class="text-lg mx-0 mb-2 mt-1 h-fit overflow-hidden text-ellipsis whitespace-nowrap">
+                                            ' . $row["productName"] . '
+                                        </p>
+                                        <div class="flex justify-between items-center">
+                                            <p class="text-red-400 m-0">
+                                            ' . number_format($row["price"], 0, ",", ".") . ' <sup>đ</sup>
                                             </p>
-                                            <div class="flex justify-between items-center">
-                                                <p class="text-red-400 m-0">
-                                                ' . number_format($row["price"], 0, ",", ".") . ' <sup>đ</sup>
-                                                </p>
-                                            </div>
                                         </div>
-                                    </a>
-                                </div>';
-                                
+                                    </div>
+                                </a>
+                            </div>';
+
                             $arr_id[] = $row["productID"];
                         }
                     } else
@@ -190,13 +244,28 @@ echo "<title>" . $arr_cate[$id] . "</title>";
 </section>
 
 <script>
-    function toggleAdd(icon) {
-        if (icon.classList.contains("fa-regular")) {
-            icon.classList.remove("fa-regular");
-            icon.classList.add("fa-solid");
-        } else {
-            icon.classList.remove("fa-solid");
-            icon.classList.add("fa-regular");
-        }
-    }
+    const stars = document.querySelectorAll(".star-rating i");
+    const ratingText = document.getElementById("rate");
+    let selectedRating = 0;
+
+    stars.forEach((star, index) => {
+        star.addEventListener("mouseover", () => {
+            for (let i = 0; i <= index; i++) {
+                stars[i].classList.add("hovered");
+            }
+        });
+
+        star.addEventListener("mouseout", () => {
+            stars.forEach((s) => s.classList.remove("hovered"));
+        });
+
+        star.addEventListener("click", () => {
+            selectedRating = parseInt(star.getAttribute("data-index"));
+            stars.forEach((s, i) => {
+                s.classList.toggle("selected", i < selectedRating);
+            });
+
+            ratingText.value = selectedRating;
+        });
+    });
 </script>

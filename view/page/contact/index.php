@@ -32,7 +32,7 @@
 
     <div class="grid grid-cols-3 gap-x-10 text-center my-20">
         <div class="shadow shadow-lg py-3 px-2 rounded-md">
-            <h4><i class="fa-solid fa-phone mr-2"></i>0941802624</h4>
+            <h4><i class="fa-solid fa-phone mr-2"></i>0962531262</h4>
 
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, officia esse modi sunt
                 reprehenderit fuga eum possimus deleniti. Beatae, animi! Quasi quam aperiam minima ex dolor nesciunt
@@ -40,7 +40,7 @@
         </div>
 
         <div class="shadow shadow-lg py-3 px-2 rounded-md">
-            <h4><i class="fa-solid fa-envelope mr-2"></i>mail@gmail.com</h4>
+            <h4><i class="fa-solid fa-envelope mr-2"></i>4g.contact@gmail.com</h4>
 
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti aut ratione aliquam minus debitis
                 nesciunt nam error distinctio. Nostrum suscipit hic voluptate totam tempore a molestias reiciendis enim
@@ -48,7 +48,7 @@
         </div>
 
         <div class="shadow shadow-lg py-3 px-2 rounded-md">
-            <h4><i class="fa-solid fa-location-dot mr-2"></i>Vietnam</h4>
+            <h4><i class="fa-solid fa-location-dot mr-2"></i>Go Vap, Vietnam</h4>
 
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti aut ratione aliquam minus debitis
                 nesciunt nam error distinctio. Nostrum suscipit hic voluptate totam tempore a molestias reiciendis enim

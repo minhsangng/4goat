@@ -22,10 +22,32 @@
             else return null;
         }
         
+        public function mGetProductSortPrice($sort, $sex, $limit, $offset) {
+            $db = new tmdt();
+            $conn = $db->connect();
+            $sql = "SELECT * FROM product P JOIN category C ON P.categoryID = C.categoryID WHERE P.sex = $sex OR P.sex = 0 ORDER BY P.price $sort LIMIT $limit OFFSET $offset";
+            $result = $conn->query($sql);
+            
+            if ($result->num_rows > 0)
+                return $result;
+            else return null;
+        }
+        
         public function mGetProductByID($productID) {
             $db = new tmdt();
             $conn = $db->connect();
             $sql = "SELECT *, GROUP_CONCAT(DISTINCT PD.color) AS colors, GROUP_CONCAT(DISTINCT PD.size) AS sizes FROM product P JOIN product_detail PD ON P.productID = PD.productID JOIN category C ON P.categoryID = C.categoryID WHERE P.productID = $productID GROUP BY PD.productID";
+            $result = $conn->query($sql);
+            
+            if ($result->num_rows > 0)
+                return $result;
+            else return null;
+        }
+        
+        public function mGetProductByPrice($sex, $min, $max) {
+            $db = new tmdt();
+            $conn = $db->connect();
+            $sql = "SELECT * FROM product P JOIN category C ON P.categoryID = C.categoryID WHERE (P.sex = $sex OR P.sex = 0) AND P.price BETWEEN $min AND $max";
             $result = $conn->query($sql);
             
             if ($result->num_rows > 0)
@@ -44,6 +66,17 @@
             else return null;
         }
         
+        public function mGetProductBySexOnCategory($sex, $categoryID) {
+            $db = new tmdt();
+            $conn = $db->connect();
+            $sql = "SELECT * FROM product P JOIN category C ON P.categoryID = C.categoryID WHERE P.categoryID = $categoryID AND (P.sex = $sex OR P.sex = 0)";
+            $result = $conn->query($sql);
+            
+            if ($result->num_rows > 0)
+                return $result;
+            else return null;
+        }
+        
         public function mGetAllCategory() {
             $db = new tmdt();
             $conn = $db->connect();
@@ -55,10 +88,21 @@
             else return null;
         }
         
+        public function mGetCategoryByID($categoryID) {
+            $db = new tmdt();
+            $conn = $db->connect();
+            $sql = "SELECT * FROM category WHERE categoryID = $categoryID";
+            $result = $conn->query($sql);
+            
+            if ($result->num_rows > 0)
+                return $result;
+            else return null;
+        }
+        
         public function mGetCategoryBySex($sex) {
             $db = new tmdt();
             $conn = $db->connect();
-            $sql = "SELECT DISTINCT(C.categoryName) FROM product P JOIN category C ON P.categoryID = C.categoryID WHERE P.sex = $sex OR P.sex = 0";
+            $sql = "SELECT DISTINCT(C.categoryName), C.* FROM product P JOIN category C ON P.categoryID = C.categoryID WHERE P.sex = $sex OR P.sex = 0";
             $result = $conn->query($sql);
             
             if ($result->num_rows > 0)

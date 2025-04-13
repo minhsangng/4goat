@@ -96,7 +96,7 @@ if ($result != 0)
                                 ?> gap-2">
                                     <?php
                                     foreach ($colors as $c) {
-                                        echo '<button type="button" data-id="' . $row["productID"] . '" name="btncolor" value="' . $c . '" class="color border rounded-lg py-1 px-4' . (isset($_SESSION["selected"]["color"]) && $_SESSION["selected"]["color"] == $c ? " bg-blue-500 text-white" : "") . '">' . $c . '</button>';
+                                        echo '<button type="button" data-id="' . $row["productID"] . '" name="btncolor" value="' . $c . '" class="color border rounded-lg py-1 px-4' . (isset($_SESSION["selected"]["color"]) && $_SESSION["selected"]["color"] == $c ? " bg-blue-400 text-white" : "") . '">' . $c . '</button>';
                                     }
                                     ?>
                                 </div>
@@ -111,7 +111,7 @@ if ($result != 0)
                                 ?> gap-2">
                                     <?php
                                     foreach ($sizes as $s) {
-                                        echo '<button type="button" data-id="' . $row["productID"] . '" name="btnsize" value="' . $s . '" class="size border rounded-lg py-1 px-4' . (isset($_SESSION["selected"]["size"]) && $_SESSION["selected"]["size"] == $s ? " bg-blue-500 text-white" : "") . '">' . $s . '</button>';
+                                        echo '<button type="button" data-id="' . $row["productID"] . '" name="btnsize" value="' . $s . '" class="size border rounded-lg py-1 px-4' . (isset($_SESSION["selected"]["size"]) && $_SESSION["selected"]["size"] == $s ? " bg-blue-400 text-white" : "") . '">' . $s . '</button>';
                                     }
                                     ?>
                                 </div>
@@ -233,16 +233,16 @@ if (isset($_POST["btnnext"])) {
     let selectedSize = "";
 
     $(document).ready(function () {
-        selectedColor = $(".color.bg-blue-500").val() || "";
-        selectedSize = $(".size.bg-blue-500").val() || "";
+        selectedColor = $(".color.bg-blue-400").val() || "";
+        selectedSize = $(".size.bg-blue-400").val() || "";
     });
 
     $(document).on("click", ".color", function () {
         selectedColor = $(this).val();
         productID = $(this).attr("data-id");
 
-        $('.color').removeClass('bg-blue-500 text-white');
-        $(this).addClass('bg-blue-500 text-white');
+        $('.color').removeClass('bg-blue-400 text-white');
+        $(this).addClass('bg-blue-400 text-white');
 
         sendSelection();
     });
@@ -251,8 +251,8 @@ if (isset($_POST["btnnext"])) {
         selectedSize = $(this).val();
         productID = $(this).attr("data-id");
 
-        $('.size').removeClass('bg-blue-500 text-white');
-        $(this).addClass('bg-blue-500 text-white');
+        $('.size').removeClass('bg-blue-400 text-white');
+        $(this).addClass('bg-blue-400 text-white');
 
         sendSelection();
     });

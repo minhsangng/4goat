@@ -255,24 +255,27 @@ $ctrlBrand = new cBrand();
             if ($result != 0) {
               while ($row = $result->fetch_assoc()) {
                 echo '<li class="cart-item list-group-item flex! items-center! w-full cursor-default" data-id="' . $row["productID"] . '">
-                <input type="checkbox" name="selectCartItem[]" value="' . $row["productID"] . '" id="" class="mr-4! w-fit!">
-                <div class="flex justify-between w-full">
-                  <div class="">
-                    <h6 class="my-0">' . $row["productName"] . '</h6>
-                    <small class="border-r border-[#DDD] pr-3">' . $row["size"] . ', ' . $row["color"] . '</small>
-                    <small class="text-body-secondary">' . number_format($row["price"], 0, ",", ".") . '<sup>đ</sup></small>
-                  </div>
-                  <div class="text-body-secondary flex justify-around items-center">
-                    <button type="button" data-id="' . $row["cartID"] . '" data-price="' . $row["price"] . '"
-                      class="decrease btn border-1 border-[#DDD]! px-2! py-1! rounded-sm! text-base! flex! justify-center! items-center!"><i
-                        class="fa-solid fa-minus"></i></button>
-                    <input type="number" data-id="' . $row["cartID"] . '" data-price="' . $row["price"] . '" name="quantity" class="mx-2 quantity w-8 text-center" value="' . $row["quantity"] . '">
-                    <button type="button" data-id="' . $row["cartID"] . '" data-price="' . $row["price"] . '"
-                      class="increase btn border-1 border-[#DDD]! px-2! py-1! rounded-sm! text-base! flex! justify-center! items-center!"><i
-                        class="fa-solid fa-plus"></i></button>
-                  </div>
-                </div>
-              </li>';
+                        <input type="checkbox" name="selectCartItem[]" value="' . $row["productID"] . '" id="" class="mr-4! w-fit!">
+                        <div class="flex justify-between w-full">
+                          <div class="">
+                            <h6 class="my-0">' . $row["productName"] . '</h6>
+                            <small class="border-r border-[#DDD] pr-3">' . $row["size"] . ', ' . $row["color"] . '</small>
+                            <small class="price text-body-secondary">' . number_format($row["price"], 0, ",", ".") . '<sup>đ</sup></small>
+                          </div>
+                          <div class="flex flex-col justify-around items-center">
+                            <div class="text-body-secondary flex justify-around items-center">
+                              <button type="button" data-id="' . $row["cartID"] . '" data-price="' . $row["price"] . '"
+                                class="decrease btn border-1 border-[#DDD]! px-2! py-1! rounded-sm! text-base! flex! justify-center! items-center!"><i
+                                  class="fa-solid fa-minus"></i></button>
+                              <input type="number" data-id="' . $row["cartID"] . '" data-price="' . $row["price"] . '" name="quantity" class="mx-2 quantity w-8 text-center" value="' . $row["quantity"] . '">
+                              <button type="button" data-id="' . $row["cartID"] . '" data-price="' . $row["price"] . '"
+                                class="increase btn border-1 border-[#DDD]! px-2! py-1! rounded-sm! text-base! flex! justify-center! items-center!"><i
+                                  class="fa-solid fa-plus"></i></button>
+                            </div>
+                            <p data-id="' . $row["productID"] . '" data-cart="' . $row["cartID"] . '" class="text-del text-xs text-orange-400 m-0">Xoá sản phẩm</p>
+                          </div>
+                        </div>
+                      </li>';
 
                 $totalPrice += ($row["price"] * $row["quantity"]);
               }
@@ -310,7 +313,7 @@ $ctrlBrand = new cBrand();
           $result = $ctrlWishList->cGetWishListByCustomer($customerID);
 
           $countWL = $result->num_rows;
-          echo $countWL;
+          echo ($countWL != 0 ? $countWL : 0);
           ?></span>
         </h4>
         <ul class="list-group mb-3" id="content">
@@ -379,7 +382,7 @@ $ctrlBrand = new cBrand();
         <div class="col-auto">
           <a class="navbar-brand relative" href="">
             <img src="src/images/logo.png" alt="4Goat - Logo" width="80">
-            <h1 class="absolute bottom-2 left-8">4Goat</h1>
+            <h1 class="absolute bottom-3 left-10">4Goat</h1>
           </a>
         </div>
 
@@ -482,6 +485,8 @@ $ctrlBrand = new cBrand();
 
         if (e.target.closest("input[type='number']")) return;
 
+        if (e.target.closest(".text-del")) return;
+
         const checkbox = item.querySelector("input[type='checkbox']");
         checkbox.checked = !checkbox.checked;
       });
@@ -557,12 +562,60 @@ $ctrlBrand = new cBrand();
         },
         success: function (response) {
           let productID = response.productID;
-          let element = document.querySelector(`[data-id='` + productID +`']`);
+          let element = document.querySelector(`[data-id='` + productID + `']`);
           if (element)
             element.closest("li").remove();
-            
+
           console.log(response);
         }
       });
+    }
+
+    document.querySelectorAll(".text-del").forEach(function (input) {
+      input.addEventListener("click", function () {
+        let productID = document.querySelector(".text-del").getAttribute("data-id");
+        let cartID = document.querySelector(".text-del").getAttribute("data-cart");
+        updateCart(productID, cartID);
+      });
+    });
+
+    function updateCart(productID, cartID) {
+      $.ajax({
+        url: "view/page/detail/process.php",
+        method: "POST",
+        dataType: "json",
+        data: {
+          productID: productID,
+          cartID: cartID,
+          action: "del"
+        },
+        success: function (response) {
+          let cartID = response.cartID;
+          let element = document.querySelector(`p[data-cart='${cartID}']`);
+          if (element) {
+            element.closest("li.cart-item")?.remove();
+            updateTotalPrice();
+          }
+          
+          console.log(response);
+        }
+      });
+    }
+
+    function updateTotalPrice() {
+      let cartItems = document.querySelectorAll(".cart-item");
+      let total = 0;
+
+      cartItems.forEach(function (item) {
+        let priceText = item.querySelector(".price")?.textContent || "0";
+        let price = parseInt(priceText.replace(/\D/g, ""));
+
+        let quantity = parseInt(item.querySelector(".quantity")?.value || 1);
+
+        total += price * quantity;
+      });
+
+      document.querySelector(".totalPrice").innerHTML =
+        total.toLocaleString("vi-VN") + "<sup>đ</sup>";
     }
   </script>
