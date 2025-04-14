@@ -11,6 +11,7 @@ include_once("model/mwishList.php");
 include_once("model/mLogin.php");
 include_once("model/mCart.php");
 include_once("model/mBrand.php");
+include_once("model/mCollection.php");
 
 /* Include Controller */
 include_once("controller/cProduct.php");
@@ -18,6 +19,7 @@ include_once("controller/cWishList.php");
 include_once("controller/cLogin.php");
 include_once("controller/cCart.php");
 include_once("controller/cBrand.php");
+include_once("controller/cCollection.php");
 
 /* Khởi tạo biến ctrl */
 $ctrlProduct = new cProduct();
@@ -25,6 +27,7 @@ $ctrlWishList = new cWishList();
 $ctrlCart = new cCart();
 $ctrlLogin = new cLogin();
 $ctrlBrand = new cBrand();
+$ctrlCollection = new cCollection();
 ?>
 
 <head>

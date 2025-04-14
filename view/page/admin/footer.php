@@ -3,7 +3,7 @@
     <div class="row align-items-center justify-content-lg-between">
       <div class="col-lg-12 mb-lg-0 mb-4">
         <div class="copyright text-center text-sm text-muted">
-          &copy; 2025 | Phát triển bởi 
+          &copy; 2025 | Phát triển bởi
           <a href="index.php?p=contact" class="font-weight-bold" target="_blank">4Goat</a>
         </div>
       </div>
@@ -19,6 +19,10 @@
 <script src="assets/js/plugins/perfect-scrollbar.min.js"></script>
 <script src="assets/js/plugins/smooth-scrollbar.min.js"></script>
 <script src="assets/js/plugins/chartjs.min.js"></script>
+
+<!-- Bootstrap Bundle JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
   const navlinks = document.querySelectorAll(".nav-link");
   let idActive = "home";

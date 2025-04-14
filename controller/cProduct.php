@@ -12,6 +12,14 @@
             } else return 0;
         }
         
+        public function cInsertProduct($productName, $categoryID, $brandID, $collectionID, $sex, $price, $image, $varriant) {
+            return $this->mInsertProduct($productName, $categoryID, $brandID, $collectionID, $sex, $price, $image, $varriant);
+        }
+        
+        public function cInsertProductDetail($productID, $color, $size) {
+            return $this->mInsertProductDetail($productID, $color, $size);
+        }
+        
         public function cGetProductSortPrice($sort, $sex, $limit, $offset) {
             if ($this->mGetProductSortPrice($sort, $sex, $limit, $offset) != null) {
                 return $this->mGetProductSortPrice($sort, $sex, $limit, $offset);

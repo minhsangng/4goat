@@ -1,5 +1,5 @@
 <?php
-    class mPost{
+    class mPost {
         public function mGetAllPost() {
             $db = new tmdt();
             $conn = $db->connect();

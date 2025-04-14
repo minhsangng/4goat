@@ -22,6 +22,28 @@
             else return null;
         }
         
+        public function mInsertProduct($productName, $categoryID, $brandID, $collectionID, $sex, $price, $image, $varriant) {
+            $db = new tmdt();
+            $conn = $db->connect();
+            $sql = "INSERT INTO product (productName, categoryID, brandID, collectionID, sex, price, image, varriant) VALUES ('$productName', $categoryID, $brandID, $collectionID, $sex, $price, '$image', $varriant)";
+            $result = $conn->query($sql);
+            
+            if (!$result)
+                return false;
+            else return $conn->insert_id;
+        }
+        
+        public function mInsertProductDetail($productID, $color, $size) {
+            $db = new tmdt();
+            $conn = $db->connect();
+            $sql = "INSERT INTO product_detail (productID, color, size) VALUES ($productID, '$color', '$size')";
+            $result = $conn->query($sql);
+            
+            if (!$result)
+                return false;
+            else return true;
+        }
+        
         public function mGetProductSortPrice($sort, $sex, $limit, $offset) {
             $db = new tmdt();
             $conn = $db->connect();

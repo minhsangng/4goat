@@ -220,10 +220,10 @@ $ctrlCustomer = new cCustomer();
                             Phương thức thanh toán
                         </button>
                         <div id="boxpayment">
-                            <select name="" id="" class="w-full p-1 mt-2 border-2 rounded-md">
-                                <option value="1">Tiền mặt</option>
-                                <option value="2">Momo</option>
-                                <option value="3">VNPay</option>
+                            <select name="paymentMethod" id="" class="w-full p-1 mt-2 border-2 rounded-md">
+                                <option value="Tiền mặt">Tiền mặt</option>
+                                <option value="Momo">Momo</option>
+                                <option value="VNPay">VNPay</option>
                             </select>
                         </div>
                     </div>
@@ -239,6 +239,9 @@ $ctrlCustomer = new cCustomer();
     if (isset($_POST["btnsubmit"])) {
         $name = $_POST["customerName"];
         $phone = $_POST["phoneNumber"];
+        $paymentMethod = $_POSt["paymentMethod"];
+        
+        if ($paymentMethod == 1)
         $finalPrice = (int)str_replace(['.', 'đ', ' '], '',$_POST["finalPrice"]);
 
         if ($name != "" && $phone != "") {
@@ -247,7 +250,7 @@ $ctrlCustomer = new cCustomer();
                 echo '<p>Tạo khách hàng thất bại</p>';
             else {
                 $customerID = $resultCustomer;
-                $resultOrder = $ctrlOrder->cInsertOrder($_SESSION["user"][2], $customerID, $finalPrice);
+                $resultOrder = $ctrlOrder->cInsertOrder($_SESSION["user"][2], $customerID, $finalPrice, $paymentMethod);
 
                 if ($resultOrder == null)
                     echo '<p>Tạo đơn hàng thất bại</p>';

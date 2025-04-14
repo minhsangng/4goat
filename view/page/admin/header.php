@@ -56,7 +56,7 @@
         aria-hidden="true" id="iconSidenav"></i>
       <a class="relative" href="index.php">
         <img src="../../../src/images/logo.png" alt="4Goat - Logo" width="80">
-        <h1 class="absolute -bottom-8 left-10 text-5xl! text-black! font-[Marcellus] font-normal!">4Goat</h1>
+        <h1 class="absolute -bottom-6 left-10 text-5xl! text-black! font-[Marcellus] font-normal!">4Goat</h1>
       </a>
     </div>
     <hr class="horizontal dark mt-4">
@@ -126,7 +126,7 @@
           <div class="ms-md-auto pe-md-3 d-flex align-items-center">
             <div class="input-group">
               <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
-              <input type="text" class="form-control" placeholder="Type here...">
+              <input type="text" class="form-control" placeholder="Tìm kiếm ...">
             </div>
           </div>
           <ul class="navbar-nav justify-content-end">

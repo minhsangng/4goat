@@ -59,26 +59,30 @@ if ($result != 0)
                         <h1 class="text-4xl! font-bold border-l-2 pl-4">
                             <?= $row["productName"] ?>
                         </h1>
-                        <div id="rating" class="flex items-center space-x-2">
-                            <div class="flex items-center">
+                        
                                 <?php
                                 $resultReview = $ctrlProduct->cGetStarRate($productID);
-                                $rowReview = $resultReview->fetch_assoc();
+                                if (isset($resultReview->num_rows) > 0) {
+                                    echo '<div id="rating" class="flex items-center space-x-2">
+                                            <div class="flex items-center">';
+                                    while ($rowReview = $resultReview->fetch_assoc()) {
 
-                                list($rate, $dec) = explode(".", round(number_format($rowReview["AvgRate"], 1, ",", ".") * 2) / 2);
-
-                                for ($i = 0; $i < (int) $rate; $i++)
-                                    echo '<i class="fas fa-star text-yellow-500"></i>';
-
-                                if ($dec != 0)
-                                    echo '<i class="fa-solid fa-star-half text-yellow-500"></i>';
+                                        list($rate, $dec) = explode(".", round(number_format($rowReview["AvgRate"], 1, ",", ".") * 2) / 2);
+    
+                                        for ($i = 0; $i < (int) $rate; $i++)
+                                            echo '<i class="fas fa-star text-yellow-500"></i>';
+    
+                                        if ($dec != 0)
+                                            echo '<i class="fa-solid fa-star-half text-yellow-500"></i>';
+                                    }
+                                    
+                                    echo '</div>
+                                            <span class="text-gray-500">
+                                                <?= $rowReview["CountRV"] ?> bài đánh giá
+                                            </span>
+                                        </div>';
+                                }
                                 ?>
-
-                            </div>
-                            <span class="text-gray-500">
-                                <?= $rowReview["CountRV"] ?> bài đánh giá
-                            </span>
-                        </div>
                         <div class="text-3xl font-bold">
                             <p class="m-0 p-3 rounded-sm bg-[#DDD]">
                                 <?php echo number_format($row["price"], 0, ",", ".") ?>

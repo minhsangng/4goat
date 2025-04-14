@@ -16,7 +16,7 @@
                             NEW COLLECTIONS
                         </h3>
                         <a class="text-sm mt-10" href="#">
-                            See more
+                            Xem chi tiết
                             <i class="fas fa-arrow-right">
                             </i>
                         </a>
@@ -24,14 +24,27 @@
                     <div class="grid grid-cols-2 gap-x-10 h-2/3">
                         <img alt="Model wearing a black oversized coat" class="h-full w-72"
                             src="https://storage.googleapis.com/a1aa/image/fHsi_8NW2QWqxCwSW6-R4sffUxupqfWPudbNiCEL63Y.jpg" />
-                        <p class="text-md indent-8">
-                            A stoical elegance, you might call it. Black asymmetric dresses blowing voluminously in the
-                            arctic wind. Oversized hybrids of hoodie and padded outerwear, leather jackets that turn out
-                            to
-                            be made from Balenciaga's new mycelium-derived leather-mimicking alternative. Tote bags
-                            mated
-                            with boots.
-                        </p>
+
+                        <div>
+                            <?php
+                            $result = $ctrlCollection->cGetAllCollection();
+
+                            if ($result == null) {
+                                echo '<p>Không có dữ liệu</p>';
+                            } else {
+                                $n = 0;
+
+                                while ($row = $result->fetch_assoc()) {
+                                    echo '<h4>BST: ' . $row["collectionName"] . '</h4>';
+                                    echo '<p>'.$row["author"].'</p>';
+
+                                    echo '<p class="text-md indent-8">Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit autem quia numquam, ipsam hic aperiam. Sunt beatae consequuntur nobis expedita exercitationem magnam cupiditate, molestias vitae obcaecati, voluptatem sint amet omnis!</p>';
+                                    $n++;
+                                    if ($n >= 1) break;
+                                }
+                            }
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -44,63 +57,31 @@
                     Fashion Designers
                 </h2>
                 <a class="text-sm" href="#">
-                    See more
+                    Tất cả
                     <i class="fas fa-arrow-right">
                     </i>
                 </a>
             </div>
             <div class="grid grid-cols-5 gap-8 mt-4">
-                <div class="text-center">
-                    <img alt="Women's Swing Twisted Shirt in White"
-                        src="https://storage.googleapis.com/a1aa/image/HiwXqZ6Ilt_NlxW3RxGTHlZqEeGRhDuh8TsGlifAfnw.jpg"/>
-                    <p class="mt-2">
-                        WOMEN'S SWING TWISTED SHIRT IN WHITE
-                    </p>
-                    <p class="mt-1">
-                        $350
-                    </p>
-                </div>
-                <div class="text-center">
-                    <img alt="Cargo Jacket in Black"
-                        src="https://storage.googleapis.com/a1aa/image/xKGiDEVF7tA1Frh9g8cfavuDG8BeOdnyGKm0fm4dvYg.jpg"/>
-                    <p class="mt-2">
-                        CARGO JACKET IN BLACK
-                    </p>
-                    <p class="mt-1">
-                        $1900
-                    </p>
-                </div>
-                <div class="text-center">
-                    <img alt="Women's Minimal Hourglass Jacket in Black"
-                        src="https://storage.googleapis.com/a1aa/image/LPb-TonnV7PNj5ae6fd5uiRI_LvLlXyiAI2lgf22IL4.jpg"/>
-                    <p class="mt-2">
-                        WOMEN'S MINIMAL HOURGLASS JACKET IN BLACK
-                    </p>
-                    <p class="mt-1">
-                        $2800
-                    </p>
-                </div>
-                <div class="text-center">
-                    <img alt="Women's Fitted Dress in Black"
-                        src="https://storage.googleapis.com/a1aa/image/IKAUqqY4ARNvHSJxYYKjpYB2r3Edmy-JMzuA-y5Nznc.jpg"/>
-                    <p class="mt-2">
-                        WOMEN'S FITTED DRESS IN BLACK
-                    </p>
-                    <p class="mt-1">
-                        $1400
-                    </p>
-                </div>
-                <div class="text-center">
-                    <img alt="Women's Fitted Dress in Black"
-                        src="https://storage.googleapis.com/a1aa/image/IKAUqqY4ARNvHSJxYYKjpYB2r3Edmy-JMzuA-y5Nznc.jpg"/>
-                    <p class="mt-2">
-                        WOMEN'S FITTED DRESS IN BLACK
-                    </p>
-                    <p class="mt-1">
-                        $1400
-                    </p>
-                </div>
-            </div>
+                <?php
+                if (!$result) {
+                    echo '<p>Không có dữ liệu</p>';
+                } else {
+                    $n = 0;
+                    while ($row = $result->fetch_assoc()) {
+                        echo '<div class="text-center">
+                                <img alt=""
+                                    src="https://storage.googleapis.com/a1aa/image/HiwXqZ6Ilt_NlxW3RxGTHlZqEeGRhDuh8TsGlifAfnw.jpg"/>
+                                <p class="mt-2">
+                                    ' . $row["author"] . '
+                                </p>
+                            </div>';
+                        $n++;
+                        if ($n >= 5)
+                            break;
+                    }
+                }
+                ?>
         </section>
     </main>
 </section>
