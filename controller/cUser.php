@@ -5,7 +5,5 @@
                 return $this->mGetAllUser();
             } else return 0;
         }
-        
-        
     }
 ?>

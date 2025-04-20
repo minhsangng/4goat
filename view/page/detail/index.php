@@ -60,7 +60,7 @@ if ($result != 0)
                             <?= $row["productName"] ?>
                         </h1>
 
-                        <div id="rating" class="flex items-center space-x-2">
+                        <div id="rating" class="flex flex-col space-y-2">
                             <?php
                             $resultReview = $ctrlProduct->cGetStarRate($productID);
                             if (isset($resultReview->num_rows) > 0) {
@@ -129,12 +129,13 @@ if ($result != 0)
                                     if (isset($_SESSION["customer"])) {
                                         $resultCart = $ctrlCart->cGetCartByIDs($row["productID"], $_SESSION["customer"][2]);
 
-                                    if ($resultCart->num_rows > 0) {
-                                        $rowCart = $resultCart->fetch_assoc();
-                                        echo $rowCart["quantity"];
+                                        if ($resultCart->num_rows > 0) {
+                                            $rowCart = $resultCart->fetch_assoc();
+                                            echo $rowCart["quantity"];
+                                        } else
+                                            echo 1;
                                     } else
                                         echo 1;
-                                    } else echo 1;
                                     ?>" name="quantity"
                                         class="quantity w-10 text-center border-l border-r border-[#DDD]">
                                     <button type="button" class="increase px-2"><i
@@ -172,6 +173,87 @@ if ($result != 0)
     </div>
 </section>
 
+<section class="bg-white pt-12 pb-6 bg-light">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl!">Đánh giá sản phẩm</h2>
+        <div class="flex justify-between bg-[#8c907e] text-white px-10 py-4 mb-4">
+            <div>
+                <?php
+                $resultReview = $ctrlReview->cGetReviewByProduct($productID);
+                $avgRate = 0;
+                while ($rowReview = $resultReview->fetch_assoc()) {
+                    $avgRate += $rowReview["rate"];
+                }
+                echo '<div class="flex items-center"><p class="text-5xl! p-0 mr-2! m-0">' . (round(number_format($avgRate / $resultReview->num_rows, 1, ",", ".") * 2) / 2) . '/5</p>';
+                list($rate, $dec) = explode(".", round(number_format($avgRate / $resultReview->num_rows, 1, ",", ".") * 2) / 2);
+
+                for ($i = 0; $i < (int) $rate; $i++)
+                    echo '<i class="fas fa-star text-yellow-500 text-xl"></i>';
+
+                if ($dec != 0)
+                    echo '<i class="fa-solid fa-star-half text-yellow-500 text-xl"></i></div>';
+                echo '</div><p>(' . $resultReview->num_rows . ' đánh giá)</p>';
+                ?>
+            </div>
+            <ul class="flex space-x-4">
+                <li>
+                    <button type="button" class="px-6 py-2 rounded-lg! border">5 <i
+                            class="fas fa-star text-yellow-500 text-xl"></i></button>
+                </li>
+                <li>
+                    <button type="button" class="px-6 py-2 rounded-lg! border">4 <i
+                            class="fas fa-star text-yellow-500 text-xl"></i></button>
+                </li>
+                <li>
+                    <button type="button" class="px-6 py-2 rounded-lg! border">3 <i
+                            class="fas fa-star text-yellow-500 text-xl"></i></button>
+                </li>
+                <li>
+                    <button type="button" class="px-6 py-2 rounded-lg! border">2 <i
+                            class="fas fa-star text-yellow-500 text-xl"></i></button>
+                </li>
+                <li>
+                    <button type="button" class="px-6 py-2 rounded-lg! border">1 <i
+                            class="fas fa-star text-yellow-500 text-xl"></i></button>
+                </li>
+            </ul>
+        </div>
+        <div>
+            <ul>
+                <?php
+                $result = $ctrlReview->cGetReviewByProduct($productID);
+
+                if ($result != null) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo '<li class="border-b border-gray-300 mb-3">
+                                    <div class="flex items-center">
+                                        <div class="size-12 rounded-full bg-gray-300 flex justify-center items-center"><i class="fa-regular fa-user text-2xl"></i></div>
+                                        <div class="flex items-center">
+                                            <h5 class="text-xl! ml-4 mb-0">' . $row["customerName"] . '</h5>
+                                            <p class="text-gray-400 italic text-sm m-0 pl-2"> - ' . $row["date"] . '</p>
+                                        </div>
+                                    </div>
+                                    <p class="ml-16">' . $row["content"] . '</p>
+                                </li>';
+
+                    }
+                } else
+                    echo 'Không có dữ liệu';
+                ?>
+                <li>
+                    <div class="flex">
+                        <input type="text" name="" id=""
+                            class="w-full outline-none border rounded-tl rounded-bl-lg px-4 py-2"
+                            placeholder="Để lại bình luận ...">
+                        <button type="button" class="bg-gray-200 px-8 py-2 rounded-tr! rounded-br!"><i
+                                class="fa-regular fa-paper-plane"></i></button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
 <?php
 if (isset($_POST["btnaddcart"])) {
     $quantity = (int) $_POST["quantity"];
@@ -179,27 +261,29 @@ if (isset($_POST["btnaddcart"])) {
     $color = $_SESSION["selected"]["color"];
     $size = $_SESSION["selected"]["size"];
 
-    $resultCart = $ctrlCart->cCheckCart($_SESSION["customer"][2]);
-    if ($resultCart != 0) {
-        $cartID = (int) $resultCart["cartID"];
+    if (isset($_SESSION["customer"])) {
+        $resultCart = $ctrlCart->cCheckCart($_SESSION["customer"][2]);
+        if ($resultCart != 0) {
+            $cartID = (int) $resultCart["cartID"];
 
-        $resultCartDetail = $ctrlCart->cAddToCartDetail($cartID, $productID, $price, $quantity, $color, $size, 0, NULL);
+            $resultCartDetail = $ctrlCart->cAddToCartDetail($cartID, $productID, $price, $quantity, $color, $size, 0, NULL);
 
-        if (!$resultCartDetail)
-            $ctrlMessage->errorMessage("Thêm vào giỏ hàng thất bại");
-        else {
-            echo "<script>
+            if (!$resultCartDetail)
+                $ctrlMessage->errorMessage("Thêm vào giỏ hàng thất bại");
+            else {
+                echo "<script>
                     window.location.href = 'index.php?p=detail&id=" . $productID . "';
                 </script>";
-        }
-    } else {
-        $resultCart = $ctrlCart->cAddToCart($_SESSION["customer"][2]);
+            }
+        } else {
+            $resultCart = $ctrlCart->cAddToCart($_SESSION["customer"][2]);
 
-        if (!$resultCart)
-            $ctrlMessage->errorMessage("Thêm vào giỏ hàng thất bại");
-        else
-            $resultCartDetail = $ctrlCart->cAddToCartDetail($resultCart, $productID, $price, $quantity, $color, $size, 0, NULL);
-    }
+            if (!$resultCart)
+                $ctrlMessage->errorMessage("Thêm vào giỏ hàng thất bại");
+            else
+                $resultCartDetail = $ctrlCart->cAddToCartDetail($resultCart, $productID, $price, $quantity, $color, $size, 0, NULL);
+        }
+    } else $ctrlMessage->warningMessage("Vui lòng đăng nhập đề sử dụng chức năng này");
 }
 
 if (isset($_POST["btnnext"])) {
@@ -237,7 +321,7 @@ if (isset($_POST["btnnext"])) {
             }
         });
     });
-    
+
     let productID = "";
     let selectedColor = "";
     let selectedSize = "";
