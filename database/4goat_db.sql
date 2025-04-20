@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 20, 2025 at 07:24 PM
+-- Generation Time: Apr 20, 2025 at 09:20 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -194,6 +194,7 @@ INSERT INTO `customer` (`customerID`, `customerName`, `phoneNumber`, `email`, `l
 (6, 'Hao Thiên Khuyễn', '0941326251', NULL, NULL, NULL, NULL, 0, 1, ''),
 (7, 'Lê Đỗ Quỳnh Hường', '0941812345', NULL, NULL, NULL, NULL, 0, 1, ''),
 (8, 'Trần Cao Kiệt', '0923256421', NULL, NULL, NULL, NULL, 0, 1, '');
+
 -- --------------------------------------------------------
 
 --
@@ -783,10 +784,12 @@ CREATE TABLE `promotion` (
 --
 
 CREATE TABLE `review` (
+  `reviewID` int(11) NOT NULL,
   `customerID` int(11) NOT NULL,
   `productID` int(11) NOT NULL,
   `content` text NOT NULL,
   `rate` int(11) NOT NULL,
+  `date` datetime NOT NULL DEFAULT current_timestamp(),
   `status` tinyint(4) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
 
@@ -794,9 +797,9 @@ CREATE TABLE `review` (
 -- Dumping data for table `review`
 --
 
-INSERT INTO `review` (`customerID`, `productID`, `content`, `rate`, `status`) VALUES
-(1, 1, 'Vải đẹp, đúng form, mặc vừa vặn, sẽ mua tiếp', 5, 1),
-(2, 1, 'Tạm ổn', 3, 1);
+INSERT INTO `review` (`reviewID`, `customerID`, `productID`, `content`, `rate`, `date`, `status`) VALUES
+(1, 4, 1, 'Vải đẹp, đúng form, mặc vừa vặn, sẽ mua tiếp', 5, '2025-04-21 01:09:30', 1),
+(2, 5, 1, 'Tạm ổn', 3, '2025-04-20 06:15:25', 1);
 
 -- --------------------------------------------------------
 
@@ -940,7 +943,7 @@ ALTER TABLE `promotion`
 -- Indexes for table `review`
 --
 ALTER TABLE `review`
-  ADD PRIMARY KEY (`customerID`,`productID`),
+  ADD PRIMARY KEY (`reviewID`),
   ADD KEY `productID` (`productID`);
 
 --
@@ -968,6 +971,24 @@ ALTER TABLE `wishlist`
 --
 
 --
+-- AUTO_INCREMENT for table `brand`
+--
+ALTER TABLE `brand`
+  MODIFY `brandID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `cart`
+--
+ALTER TABLE `cart`
+  MODIFY `cartID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `cart_detail`
+--
+ALTER TABLE `cart_detail`
+  MODIFY `cart_detailID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+
+--
 -- AUTO_INCREMENT for table `collection`
 --
 ALTER TABLE `collection`
@@ -984,6 +1005,54 @@ ALTER TABLE `customer`
 --
 ALTER TABLE `order`
   MODIFY `orderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `order_detail`
+--
+ALTER TABLE `order_detail`
+  MODIFY `orderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `post`
+--
+ALTER TABLE `post`
+  MODIFY `postID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `product`
+--
+ALTER TABLE `product`
+  MODIFY `productID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+
+--
+-- AUTO_INCREMENT for table `promotion`
+--
+ALTER TABLE `promotion`
+  MODIFY `promotionID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `review`
+--
+ALTER TABLE `review`
+  MODIFY `reviewID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `storage`
+--
+ALTER TABLE `storage`
+  MODIFY `storageID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `wishlist`
+--
+ALTER TABLE `wishlist`
+  MODIFY `wishlistID` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
