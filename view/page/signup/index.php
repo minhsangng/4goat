@@ -5,10 +5,12 @@ error_reporting(1);
 session_start();
 
 include_once("../../../model/connect.php");
+include_once("../../../model/message.php");
 include_once("../../../model/mLogin.php");
 include_once("../../../controller/cLogin.php");
 
 $ctrl = new cLogin();
+$ctrlMessage = new message();
 ?>
 
 <head>
@@ -28,9 +30,47 @@ $ctrl = new cLogin();
     <!-- CSS -->
     <link rel="stylesheet" href="../../../src/css/styleLogin.css">
 
+    <!-- CDN Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        input {
+            background-image: none !important;
+        }
+    </style>
+
     <!-- CDN Framework tailwindcss -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- CDN Sweet Alert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+<?php
+if (isset($_POST["btnsignup"])) {
+    $userName = $_POST["username"];
+    $phoneNumber = $_POST["phone"];
+    $email = (isset($_POST["email"]) && $_POST["email"] != "" ? $_POST["email"] : "");
+    $loginName = $_POST["loginname"];
+    $password = $_POST["password"];
+    $address = (isset($_POST["address"]) && $_POST["address"] != "" ? $_POST["address"] : "");
+
+    if (empty($userName) || empty($phoneNumber) || empty($loginName) || empty($password)) {
+        $ctrlMessage->warningMessage("Vui lòng nhập đầy đủ thông tin đăng ký");
+    } else {
+        $result = $ctrl->cSignup($userName, $phoneNumber, $email, $loginName, $password, $address, 1);
+
+        if (!$result)
+            $ctrlMessage->errorMessage("Đăng ký tài khoản tất bại. Vui lòng thử lại");
+        else {
+            $ctrlMessage->successMessage("Đăng ký tài khoản thành công");
+
+            echo '<script>setTimeout(window.location.href = "../login/";, 1500);</script>';
+        }
+    }
+}
+?>
 
 <body>
     <div class="container">
@@ -42,25 +82,43 @@ $ctrl = new cLogin();
                     </h2>
                 </a>
                 <h1 class="mb-4 mt-8!">Đăng ký</h1>
-                <div>
-                    <input type="text" placeholder="Login Name" name="name" id="username" />
+                <div class="relative">
+                    <input type="text" placeholder="Họ và tên" name="username" id="username" />
+                    <span class="text-red-400 absolute top-3 left-11">*</span>
+                    <i class="absolute top-4 left-13 text-gray-400 fa-solid fa-user"></i>
                 </div>
-                <div>
-                    <input type="password" placeholder="Password" name="password" id="password" />
+                <div class="relative">
+                    <input type="text" placeholder="Liên hệ" name="phone" id="phone" />
+                    <span class="text-red-400 absolute top-3 left-11">*</span>
+                    <i class="absolute top-4 left-13 text-gray-400 fa-solid fa-phone"></i>
                 </div>
-                <?php
-                if (isset($_POST["btnlogin"])) {
-                    if ($ctrl->cSubmitLogin($_POST["name"], $_POST["password"]) == 0)
-                        echo "<p class='text-red-400'>Sai tên đăng nhập hoặc mật khẩu!</p>";
-                    else if ($ctrl->cSubmitLogin($_POST["name"], $_POST["password"]) == -1)
-                        echo "<p class='text-red-400'>Vui lòng nhập đầy đủ thông tin đăng nhập!</p>";
-                }
-                ?>
+                <div class="relative">
+                    <input type="text" placeholder="Email" name="email" id="email" />
+                    <i class="absolute top-4 left-13 text-gray-400 fa-solid fa-envelope"></i>
+                </div>
+                <div class="relative">
+                    <input type="text" placeholder="Địa chỉ" name="address" id="address" />
+                    <i class="absolute top-4 left-13 text-gray-400 fa-solid fa-location-dot"></i>
+                </div>
+
+                <hr class="w-[70%] mx-auto mb-2 text-gray-300 rounded-full">
+
+                <div class="relative">
+                    <input type="text" placeholder="Tên đăng nhập" name="loginname" id="loginname" />
+                    <span class="text-red-400 absolute top-3 left-11">*</span>
+                    <i class="absolute top-4 left-13 text-gray-400 fa-solid fa-user-tag"></i>
+                </div>
+                <div class="relative">
+                    <input type="password" placeholder="Mật khẩu" name="password" id="password" />
+                    <span class="text-red-400 absolute top-3 left-11">*</span>
+                    <i class="absolute top-4 left-13 text-gray-400 fa-solid fa-unlock"></i>
+                </div>
+
                 <div class="mt-2">
                     <p class="mb-1">Đã có tài khoản? <a href="../login/"> Đăng nhập</a></p>
                 </div>
                 <div>
-                    <button type="submit" name="btnlogin">Đăng ký</button>
+                    <button type="submit" name="btnsignup">Đăng ký</button>
                 </div>
             </form>
             <div class="button">

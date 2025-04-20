@@ -2,13 +2,13 @@
     <div class="row px-3 h-[70vh]">
         <div
             class="table-responsive mb-lg-0 mb-4 px-2 bg-white flex justify-center items-center space-x-14 rounded-2xl">
-            <a class="px-4 py-6 hover:no-underline! hover:not-focus:scale-110 transition ease-linear border-2 border-[#DDD] rounded-md text-2xl flex flex-col justify-center items-center"
+            <a class="px-4 py-6 text-gray-600! no-underline! hover:not-focus:scale-110 transition ease-linear border-2 border-[#DDD] rounded-md text-2xl flex flex-col justify-center items-center"
                 href="pos.php"><i class="mb-3 fa-solid fa-cart-plus"></i>Tạo đơn hàng</a>
-            <a class="px-4 py-6 hover:no-underline! hover:not-focus:scale-110 transition ease-linear border-2 border-[#DDD] rounded-md text-2xl flex flex-col justify-center items-center"
-                href="" data-bs-target="#editModal" data-bs-toggle="modal"><i
+            <a class="px-4 py-6 text-gray-600! no-underline! hover:not-focus:scale-110 transition ease-linear border-2 border-[#DDD] rounded-md text-2xl flex flex-col justify-center items-center"
+                href="" <?php echo ($_SESSION["user"][2] == 1 ? 'data-bs-target="#editModal" data-bs-toggle="modal"' : '');?>><i
                     class="mb-3 fa-solid fa-screwdriver"></i>Sửa đơn hàng</a>
-            <a class="px-4 py-6 hover:no-underline! hover:not-focus:scale-110 transition ease-linear border-2 border-[#DDD] rounded-md text-2xl flex flex-col justify-center items-center"
-                href="" data-bs-target="#delModal" data-bs-toggle="modal"><i class="mb-3 fa-solid fa-eraser"></i>Xoá đơn
+            <a class="px-4 py-6 text-gray-600! no-underline! hover:not-focus:scale-110 transition ease-linear border-2 border-[#DDD] rounded-md text-2xl flex flex-col justify-center items-center"
+                href="" <?php echo ($_SESSION["user"][2] == 1 ? 'data-bs-target="#delModal" data-bs-toggle="modal"' : ''); ?>><i class="mb-3 fa-solid fa-eraser"></i>Xoá đơn
                 hàng</a>
         </div>
     </div>
@@ -78,7 +78,7 @@ if (isset($_POST["btnconfirm"])) {
                 const myModal = new bootstrap.Modal(document.getElementById("editFormModal"));
                 myModal.show();
             });
-        </script>';
+        </>';
     } else {
         echo '<script>
             alert("Đơn hàng không tồn tại");
@@ -119,7 +119,7 @@ if (isset($_POST["btnconfirm"])) {
                     <table width="100%">
                         <tr>
                             <td width="30%">
-                                <h4>Sản phẩm</h4>
+                                <h3 class="text-[1.2rem]!">Sản phẩm</h3>
                             </td>
                             <td>
                                 <div class="flex flex-col space-y-2!">
@@ -129,7 +129,7 @@ if (isset($_POST["btnconfirm"])) {
                                         preg_match('/^(.*) \(x(\d+)\)$/', $p, $matches);
                                         $productName = $matches[1];
                                         $quantity = $matches[2];
-                                        echo '<div class="flex justify-between"><p>' . $matches[1] . '</p><input type="text" '.(isset($_POST["btnconfirm"]) && $_POST["btnconfirm"] == "del" ? "readonly" : "").' value="' . $matches[2] . '" name="quantity' . ($matches[1] == $row["productID"] ? $row["productID"] : "") . '" class="px-2! py-1! h-fit! hover:outline-none w-10"></div>';
+                                        echo '<div class="flex justify-between"><p>' . $matches[1] . '</p><input type="text" ' . (isset($_POST["btnconfirm"]) && $_POST["btnconfirm"] == "del" ? "readonly" : "") . ' value="' . $matches[2] . '" name="quantity' . ($matches[1] == $row["productID"] ? $row["productID"] : "") . '" class="px-2! py-1! h-fit! hover:outline-none w-10"></div>';
                                     }
                                     ?>
                                 </div>
@@ -137,7 +137,7 @@ if (isset($_POST["btnconfirm"])) {
                         </tr>
                         <tr>
                             <td>
-                                <h4>Khách hàng</h4>
+                                <h3 class="text-[1.2rem]!">Khách hàng</h3>
                             </td>
                             <td>
                                 <div class="pt-2">
@@ -151,7 +151,7 @@ if (isset($_POST["btnconfirm"])) {
                         </tr>
                         <tr>
                             <td>
-                                <h4>Ngày đặt</h4>
+                                <h3 class="text-[1.2rem]!">Ngày đặt</h3>
                             </td>
                             <td>
                                 <div class="pt-2">
@@ -161,7 +161,7 @@ if (isset($_POST["btnconfirm"])) {
                         </tr>
                         <tr>
                             <td>
-                                <h4>Trạng thái</h4>
+                                <h3 class="text-[1.2rem]!">Trạng thái</h3>
                             </td>
                             <td>
                                 <div class="pt-2">

@@ -5,10 +5,12 @@ error_reporting(1);
 session_start();
 
 include_once("../../../model/connect.php");
+include_once("../../../model/message.php");
 include_once("../../../model/mLogin.php");
 include_once("../../../controller/cLogin.php");
 
 $ctrl = new cLogin();
+$ctrlMessage = new message();
 ?>
 
 <head>
@@ -27,9 +29,23 @@ $ctrl = new cLogin();
 
     <!-- CSS -->
     <link rel="stylesheet" href="../../../src/css/styleLogin.css">
-
+    
+    <!-- CDN Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <style>
+        input {
+            background-image: none !important;
+        }
+    </style>
+    
     <!-- CDN Framework tailwindcss -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- CDN Sweet Alert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -42,23 +58,25 @@ $ctrl = new cLogin();
                     </h2>
                 </a>
                 <h1 class="mb-4 mt-8!">Đăng nhập</h1>
-                <div>
+                <div class="relative">
                     <input type="text" placeholder="Login Name" name="name" id="username" />
+                    <i class="absolute top-4 left-13 text-gray-400 fa-solid fa-user-tag"></i>
                 </div>
-                <div>
+                <div class="relative">
                     <input type="password" placeholder="Password" name="password" id="password" />
+                    <i class="absolute top-4 left-13 text-gray-400 fa-solid fa-unlock"></i>
                 </div>
                 <?php
                 if (isset($_POST["btnlogin"])) {
                     if ($ctrl->cSubmitLogin($_POST["name"], $_POST["password"]) == 0)
-                        echo "<p class='text-red-400'>Sai tên đăng nhập hoặc mật khẩu!</p>";
+                        $ctrlMessage->errorMessage("Sai tên đăng nhập hoặc mật khẩu");
                     else if ($ctrl->cSubmitLogin($_POST["name"], $_POST["password"]) == -1)
-                        echo "<p class='text-red-400'>Vui lòng nhập đầy đủ thông tin đăng nhập!</p>";
+                        $ctrlMessage->warningMessage("Vui lòng nhập đầy đủ thông tin đăng nhập");
                 }
                 ?>
                 <div class="mt-2">
                     <p class="mb-1">Chưa có tài khoản? <a href="../signup/"> Đăng ký</a></p>
-                    <a href="#">Quên mật khẩu?</a>
+                    <a href="../forgetpass/">Quên mật khẩu?</a>
                 </div>
                 <div>
                     <button type="submit" name="btnlogin">Đăng nhập</button>

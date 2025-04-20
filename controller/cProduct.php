@@ -6,9 +6,27 @@
             } else return 0;
         }
         
+        public function cGetNewProduct($limit) {
+            if ($this->mGetNewProduct($limit) != null) {
+                return $this->mGetNewProduct($limit);
+            } else return 0;
+        }
+        
+        public function cGetAllProductOnPage($limit, $offset) {
+            if ($this->mGetAllProductOnPage($limit, $offset) != null) {
+                return $this->mGetAllProductOnPage($limit, $offset);
+            } else return 0;
+        }
+        
         public function cGetProductByCategory($categoryID) {
             if ($this->mGetProductByCategory($categoryID) != null) {
                 return $this->mGetProductByCategory($categoryID);
+            } else return 0;
+        }
+        
+        public function cGetProductBySearch($search, $limit, $offset) {
+            if ($this->mGetProductBySearch($search, $limit, $offset) != null) {
+                return $this->mGetProductBySearch($search, $limit, $offset);
             } else return 0;
         }
         

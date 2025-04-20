@@ -1,34 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php
-session_start();
-error_reporting(1);
-
-/* Include Model */
-include_once("model/connect.php");
-include_once("model/mProduct.php");
-include_once("model/mwishList.php");
-include_once("model/mLogin.php");
-include_once("model/mCart.php");
-include_once("model/mBrand.php");
-include_once("model/mCollection.php");
-
-/* Include Controller */
-include_once("controller/cProduct.php");
-include_once("controller/cWishList.php");
-include_once("controller/cLogin.php");
-include_once("controller/cCart.php");
-include_once("controller/cBrand.php");
-include_once("controller/cCollection.php");
-
-/* Khởi tạo biến ctrl */
-$ctrlProduct = new cProduct();
-$ctrlWishList = new cWishList();
-$ctrlCart = new cCart();
-$ctrlLogin = new cLogin();
-$ctrlBrand = new cBrand();
-$ctrlCollection = new cCollection();
-?>
 
 <head>
   <meta charset="utf-8">
@@ -64,6 +35,9 @@ $ctrlCollection = new cCollection();
   <!-- CDN Framework tailwindcss -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
+  <!-- CDN Sweet Alert JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
     input[type=number]::-webkit-outer-spin-button,
     input[type=number]::-webkit-inner-spin-button {
@@ -73,6 +47,10 @@ $ctrlCollection = new cCollection();
 
     input[type=number] {
       -moz-appearance: textfield;
+    }
+
+    .nav-item.dropdown:hover .dropdown-menu {
+      display: block;
     }
   </style>
 </head>
@@ -208,14 +186,21 @@ $ctrlCollection = new cCollection();
 
   <div class="search-popup">
     <div class="search-popup-container">
-      <form role="search" method="get" class="form-group" action="">
+      <form role="search" method="POST" class="form-group" action="">
         <input type="search" id="search-form" class="form-control border-0 border-bottom pr-14!"
-          placeholder="Tìm theo những thì bạn đang nghĩ" value="" name="s" />
+          placeholder="Tìm theo những thì bạn đang nghĩ" name="search" />
         <button type="submit" class="search-submit border-0 position-absolute bg-white"
           style="top: 15px;right: 15px;"><svg class="search" width="24" height="24">
             <use xlink:href="#search"></use>
           </svg></button>
       </form>
+
+      <?php
+      if (isset($_POST["search"])) {
+        $search = $_POST["search"];
+        echo '<script>window.location.href = "index.php?p=shop&s=' . $search . '";</script>';
+      }
+      ?>
 
       <h5 class="cat-list-title">Danh mục sản phẩm</h5>
 
@@ -229,7 +214,7 @@ $ctrlCollection = new cCollection();
                   </li>';
           }
         } else
-          echo "Không có dữ liệu";
+          echo '<li class="cat-list-item">Không có dữ liệu</li>';
         ?>
       </ul>
     </div>
@@ -243,22 +228,25 @@ $ctrlCollection = new cCollection();
       <div class="order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-primary">Giỏ hàng</span>
-          <span class="badge bg-primary rounded-pill">
+          <span class="badge bg-primary rounded-pill cart-count">
             <?php
-            $result = $ctrlCart->cGetAllCart();
-            if (!isset($totalPrice))
-              $totalPrice = 0;
-            $countCart = $result->num_rows;
-            echo isset($countCart) ? $countCart : 0;
+            if (isset($_SESSION["customer"])) {
+              $result = $ctrlCart->cGetCartByCustomer($_SESSION["customer"][2]);
+              if (!isset($totalPrice))
+                $totalPrice = 0;
+              $countCart = $result->num_rows;
+              echo isset($countCart) ? $countCart : 0;
+            } else
+              echo 0;
             ?></span>
         </h4>
-        <form action="" method="POST">
+        <form action="" method="POST" id="cartForm">
           <ul class="list-group mb-3">
             <?php
-            if ($result != 0) {
+            if ($result->num_rows > 0 && isset($_SESSION["customer"])) {
               while ($row = $result->fetch_assoc()) {
                 echo '<li class="cart-item list-group-item flex! items-center! w-full cursor-default" data-id="' . $row["productID"] . '">
-                        <input type="checkbox" name="selectCartItem[]" value="' . $row["productID"] . '" id="" class="mr-4! w-fit!">
+                        <input type="checkbox" name="selectCartItem[]" value="' . $row["productID"] . '" data-id="' . $row["productID"] . '" data-price="' . $row["price"] . '" data-quantity="' . $row["quantity"] . '" class="selectItem mr-4! w-fit!">
                         <div class="flex justify-between w-full">
                           <div class="">
                             <h6 class="my-0">' . $row["productName"] . '</h6>
@@ -267,15 +255,15 @@ $ctrlCollection = new cCollection();
                           </div>
                           <div class="flex flex-col justify-around items-center">
                             <div class="text-body-secondary flex justify-around items-center">
-                              <button type="button" data-id="' . $row["cartID"] . '" data-price="' . $row["price"] . '"
-                                class="decrease btn border-1 border-[#DDD]! px-2! py-1! rounded-sm! text-base! flex! justify-center! items-center!"><i
+                              <button type="button" data-id="' . $row["cart_detailID"] . '" data-price="' . $row["price"] . '" data-product="' . $row["productID"] . '" 
+                                class="decreaseNav btn border-1 border-[#DDD]! px-2! py-1! rounded-sm! text-base! flex! justify-center! items-center!"><i
                                   class="fa-solid fa-minus"></i></button>
-                              <input type="number" data-id="' . $row["cartID"] . '" data-price="' . $row["price"] . '" name="quantity" class="mx-2 quantity w-8 text-center" value="' . $row["quantity"] . '">
-                              <button type="button" data-id="' . $row["cartID"] . '" data-price="' . $row["price"] . '"
-                                class="increase btn border-1 border-[#DDD]! px-2! py-1! rounded-sm! text-base! flex! justify-center! items-center!"><i
+                              <input type="number" data-id="' . $row["cart_detailID"] . '" data-product="' . $row["productID"] . '" name="quantity" class="mx-2 quantityNav w-8 text-center" value="' . $row["quantity"] . '">
+                              <button type="button" data-id="' . $row["cart_detailID"] . '" data-price="' . $row["price"] . '" data-product="' . $row["productID"] . '" 
+                                class="increaseNav btn border-1 border-[#DDD]! px-2! py-1! rounded-sm! text-base! flex! justify-center! items-center!"><i
                                   class="fa-solid fa-plus"></i></button>
                             </div>
-                            <p data-id="' . $row["productID"] . '" data-cart="' . $row["cartID"] . '" class="text-del text-xs text-orange-400 m-0">Xoá sản phẩm</p>
+                            <p data-id="' . $row["productID"] . '" data-cart="' . $row["cart_detailID"] . '" class="text-del text-xs text-orange-400 m-0">Xoá sản phẩm</p>
                           </div>
                         </div>
                       </li>';
@@ -283,12 +271,12 @@ $ctrlCollection = new cCollection();
                 $totalPrice += ($row["price"] * $row["quantity"]);
               }
             } else
-              echo '<li class="list-group-item flex! items-center! w-full"><p>Giỏ hàng trống!</p></li>';
+              echo '<li class="list-group-item flex! items-center! w-full"><p class="empty-cart">Giỏ hàng trống!</p></li>';
             ?>
 
-            <li class="list-group-item d-flex justify-content-between">
+            <li class="text-total-price d-flex justify-content-between">
               <span>Tổng thanh toán</span>
-              <strong class="totalPrice"><?= number_format($totalPrice, 0, ",", ".") ?><sup>đ</sup></strong>
+              <strong class="totalPriceNav">0 <sup>đ</sup></strong>
             </li>
           </ul>
           <button class="w-100 btn btn-primary btn-lg" type="submit" name="btncheckout">Thanh toán</button>
@@ -300,7 +288,7 @@ $ctrlCollection = new cCollection();
   if (isset($_POST["btncheckout"])) {
     $_SESSION["selectedCart"] = $_POST["selectCartItem"];
 
-    echo '<script>window.location.href = "index.php?p=checkout";</script>';
+    echo '<script>window.location.href = "index.php?p=checkout"; </script>';
   }
   ?>
   <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWishList"
@@ -312,31 +300,34 @@ $ctrlCollection = new cCollection();
       <div class="order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-primary">Danh sách yêu thích</span>
-          <span class="badge bg-primary rounded-pill"><?php $customerID = 1;
-          $result = $ctrlWishList->cGetWishListByCustomer($customerID);
+          <span class="badge bg-primary rounded-pill wishlist-count">
+            <?php
+            if (isset($_SESSION["customer"])) {
+              $customerID = $_SESSION["customer"][2];
+              $result = $ctrlWishList->cGetWishListByCustomer($customerID);
 
-          $countWL = $result->num_rows;
-          echo ($countWL != 0 ? $countWL : 0);
-          ?></span>
+              $countWL = $result->num_rows;
+              echo $countWL > 0 ? $countWL : 0;
+            } else
+              echo 0;
+            ?></span>
         </h4>
         <ul class="list-group mb-3" id="content">
           <?php
-          if ($result->num_rows > 0) {
+          if ($result->num_rows > 0 && isset($_SESSION["customer"])) {
             while ($row = $result->fetch_assoc()) {
-              echo '<li class="list-group-item d-flex justify-content-between lh-sm">
-                      <div>
+              echo '<li class="wl-item list-group-item d-flex justify-content-between lh-sm">
+                      <a href="index.php?p=detail&id=' . $row["productID"] . '">
                         <h6 class="my-0">' . $row["productName"] . '</h6>
                         <small class="text-body-secondary">' . $row["categoryName"] . '</small>
-                      </div>
+                      </a>
                       <span class="text-body-secondary btnwishlist" data-id="' . $row["productID"] . '"><i class="fa-solid fa-heart text-2xl cursor-pointer"></i></span>
                     </li>';
             }
           } else
-            echo '<li class="list-group-item d-flex justify-content-between lh-sm">
-                      <div>
-                        <p class="my-0">Danh sách trống. Hãy thêm ngay vào những sản phẩm bạn yêu thích</p>
-                      </div>
-                    </li>';
+            echo '<li class="d-flex justify-content-between lh-sm">
+                      <p class="my-0">Danh sách trống. Hãy thêm ngay vào những sản phẩm bạn yêu thích</p>
+                  </li>';
           ?>
         </ul>
       </div>
@@ -409,7 +400,8 @@ $ctrlCollection = new cCollection();
                   <a class="nav-link" href="index.php" id="home">Trang Chủ</a>
                 </li>
                 <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="index.php?p=shop" id="shop" data-bs-toggle="dropdown"
+                  <a class="nav-link dropdown-toggle" href="index.php?p=shop"
+                    onclick="window.location.href = 'index.php?p=shop';" id="shop" 
                     aria-haspopup="true" aria-expanded="false">Cửa Hàng</a>
                   <ul class="dropdown-menu list-unstyled" aria-labelledby="dropdownShop">
                     <li>
@@ -440,13 +432,13 @@ $ctrlCollection = new cCollection();
               <a href="index.php" class="text-uppercase mx-3" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasWishList" aria-controls="offcanvasWishList"><ion-icon class="size-6"
                   name="heart-outline"></ion-icon> <span
-                  class="wishlist-count">(<?= (isset($countWL) ? $countWL : 0) ?>)</span>
+                  class="wishlist-count-nav">(<?= (isset($countWL) ? $countWL : 0) ?>)</span>
               </a>
             </li>
             <li class="d-none d-lg-block">
               <a href="index.php" class="text-uppercase mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
                 aria-controls="offcanvasCart"><ion-icon class="size-6" name="cart-outline"></ion-icon>
-                <span class="cart-count">(<?= (isset($countCart) ? $countCart : 0) ?>)</span>
+                <span class="cart-count-nav">(<?= (isset($countCart) ? $countCart : 0) ?>)</span>
               </a>
             </li>
             <li class="d-none d-lg-block relative z-1">
@@ -482,6 +474,28 @@ $ctrlCollection = new cCollection();
   </nav>
 
   <script>
+    document.querySelector("form#cartForm").addEventListener("submit", function (e) {
+      const selected = document.querySelectorAll(".selectItem:checked");
+      if (selected.length === 0) {
+        e.preventDefault();
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          icon: "warning",
+          title: "Vui lòng chọn sản phẩm để thanh toán"
+        });
+      }
+    });
+
     document.querySelectorAll(".cart-item").forEach(item => {
       item.addEventListener("click", function (e) {
         if (e.target.closest("button")) return;
@@ -492,64 +506,88 @@ $ctrlCollection = new cCollection();
 
         const checkbox = item.querySelector("input[type='checkbox']");
         checkbox.checked = !checkbox.checked;
-      });
-    });
 
-    document.querySelectorAll(".increase").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        const qtyInput = this.parentElement.querySelector(".quantity");
-        let currentQty = parseInt(qtyInput.value) || 1;
-        qtyInput.value = currentQty + 1;
+        let total = 0;
 
-        let cartID = document.querySelector(".increase").getAttribute("data-id");
-        updateQuantity(cartID, currentQty + 1);
-      });
-    });
+        if (checkbox.checked) {
+          let price = checkbox.getAttribute("data-price");
+          let quantity = checkbox.getAttribute("data-quantity");
 
-    document.querySelectorAll(".decrease").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        const qtyInput = this.parentElement.querySelector(".quantity");
-        let currentQty = parseInt(qtyInput.value) || 1;
-        if (currentQty > 1) {
-          qtyInput.value = currentQty - 1;
-
-          let cartID = document.querySelector(".decrease").getAttribute("data-id");
-          updateQuantity(cartID, currentQty - 1);
+          total += (price * quantity);
         }
+
+        document.querySelector(".totalPriceNav").innerHTML = total.toLocaleString("vi-VN") + "<sup>đ</sup>";
       });
     });
 
-    document.querySelectorAll(".quantity").forEach(function (input) {
+    document.querySelectorAll(".increaseNav").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const qtyInput = this.parentElement.querySelector(".quantityNav");
+        let currentQty = parseInt(qtyInput.value) || 1;
+
+        currentQty++;
+        qtyInput.value = currentQty;
+
+        let productID = this.getAttribute("data-product");
+        let cart_detailID = this.getAttribute("data-id");
+
+        updateQuantity(cart_detailID, productID, currentQty);
+      });
+    });
+
+    document.querySelectorAll(".decreaseNav").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        const qtyInput = this.parentElement.querySelector(".quantityNav");
+        let currentQty = parseInt(qtyInput.value) || 1;
+
+        if (currentQty > 1)
+          currentQty--;
+        else
+          currentQty = 1;
+
+        qtyInput.value = currentQty;
+
+        let productID = this.getAttribute("data-product");
+        let cart_detailID = this.getAttribute("data-id");
+
+        updateQuantity(cart_detailID, productID, currentQty);
+      });
+    });
+
+    document.querySelectorAll(".quantityNav").forEach(function (input) {
       input.addEventListener("input", function () {
         let qty = parseInt(this.value);
         if (isNaN(qty) || qty < 1) {
           this.value = 1;
         }
 
-        let cartID = document.querySelector(".quantity").getAttribute("data-id");
-        updateQuantity(cartID, qty);
+        let productID = this.getAttribute("data-product");
+        let cart_detailID = this.getAttribute("data-id");
+
+        updateQuantity(cart_detailID, productID, qty);
       });
     });
 
-    function updateQuantity(cartID, quantity) {
+    function updateQuantity(cart_detailID, productID, quantity) {
       $.ajax({
         url: "view/page/detail/process.php",
         method: "POST",
+        dataType: "json",
         data: {
-          cartID: cartID,
+          cart_detailID: cart_detailID,
+          productID: productID,
           quantity: quantity
         },
         success: function (response) {
-          let data = JSON.parse(response);
-          let totalPrice = data.totalPrice;
-          document.querySelector(".totalPrice").innerHTML = totalPrice.toLocaleString("vi-VN") + `<sup>đ</sup>`;
+          document.querySelector(".totalPriceNav").innerHTML = response.newTotal.toLocaleString("vi-VN") + "<sup>đ</sup>";
         }
       });
     }
 
+    /* Thêm vào wishlist */
     document.querySelectorAll(".btnwishlist").forEach(function (input) {
       input.addEventListener("click", function () {
-        let productID = document.querySelector(".btnwishlist").getAttribute("data-id");
+        let productID = this.getAttribute("data-id");
         updateWishList(productID);
       });
     });
@@ -567,58 +605,69 @@ $ctrlCollection = new cCollection();
           let productID = response.productID;
           let element = document.querySelector(`[data-id='` + productID + `']`);
           if (element)
-            element.closest("li").remove();
+            element.closest("li")?.remove();
 
-          console.log(response);
+          let itemWLs = document.querySelectorAll("#content .wl-item");
+          let lengthWL = itemWLs.length;
+
+          document.querySelector(".wishlist-count-nav").textContent = "(" + lengthWL + ")";
+          document.querySelector(".wishlist-count").textContent = lengthWL;
+
+          if (lengthWL == 0) {
+            let li = document.createElement("li");
+            let p = document.createElement("p");
+            li.classList.add("d-flex", "justify-content-between", "lh-sm");
+            p.classList.add("my-0");
+            p.textContent = "Danh sách trống. Hãy thêm ngay vào những sản phẩm bạn yêu thích!";
+            li.appendChild(p);
+
+            document.querySelector("#content").appendChild(li);
+          }
         }
       });
     }
 
+    /* Xóa sản phẩm */
     document.querySelectorAll(".text-del").forEach(function (input) {
       input.addEventListener("click", function () {
-        let productID = document.querySelector(".text-del").getAttribute("data-id");
-        let cartID = document.querySelector(".text-del").getAttribute("data-cart");
-        updateCart(productID, cartID);
+        let productID = this.getAttribute("data-id");
+        let cart_detailID = this.getAttribute("data-cart");
+        updateCart(productID, cart_detailID);
       });
     });
 
-    function updateCart(productID, cartID) {
+    function updateCart(productID, cart_detailID) {
       $.ajax({
         url: "view/page/detail/process.php",
         method: "POST",
         dataType: "json",
         data: {
           productID: productID,
-          cartID: cartID,
+          cart_detailID: cart_detailID,
           action: "del"
         },
         success: function (response) {
-          let cartID = response.cartID;
-          let element = document.querySelector(`p[data-cart='${cartID}']`);
-          if (element) {
+          let cart_detailID = response.cart_detailID;
+          let element = document.querySelector(`p[data-cart='${cart_detailID}']`);
+          if (element)
             element.closest("li.cart-item")?.remove();
-            updateTotalPrice();
+
+          let itemCarts = document.querySelectorAll("#cartForm ul .cart-item");
+          let lengthCart = itemCarts.length;
+
+          document.querySelector(".cart-count-nav").textContent = "(" + lengthCart + ")";
+          document.querySelector(".cart-count").textContent = lengthCart;
+
+          if (lengthCart == 0) {
+            let li = document.createElement("li");
+            let p = document.createElement("p");
+            li.classList.add("list-group-item", "flex!", "items-center!", "w-full");
+            p.textContent = "Giỏ hàng trống!";
+            li.appendChild(p);
+
+            document.querySelector(".text-total-price").insertAdjacentElement("beforebegin", li);
           }
-          
-          console.log(response);
         }
       });
-    }
-
-    function updateTotalPrice() {
-      let cartItems = document.querySelectorAll(".cart-item");
-      let total = 0;
-
-      cartItems.forEach(function (item) {
-        let priceText = item.querySelector(".price")?.textContent || "0";
-        let price = parseInt(priceText.replace(/\D/g, ""));
-
-        let quantity = parseInt(item.querySelector(".quantity")?.value || 1);
-
-        total += price * quantity;
-      });
-
-      document.querySelector(".totalPrice").innerHTML =
-        total.toLocaleString("vi-VN") + "<sup>đ</sup>";
     }
   </script>

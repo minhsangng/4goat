@@ -15,10 +15,8 @@
                             <h1 class="absolute -bottom-6 mt-[25px] my-0 left-10 text-[3rem]!">4GOAT</h1>
                         </a>
                     </div>
-                    <p class="text-justify">Chúng tôi mang đến cho bạn những bộ trang phục thời thượng, chất lượng cao
-                        với mức giá tốt nhất.
-                        Dù bạn đang tìm kiếm phong cách năng động, thanh lịch hay cá tính, 4Goat luôn sẵn sàng giúp
-                        bạn tỏa sáng.</p>
+                    <p class="text-justify indent-8">Chúng tôi mang đến cho bạn những bộ trang phục thời thượng, chất lượng cao
+                        với mức giá tốt nhất, phù hợp với mọi phong cách năng động, thanh lịch hay cá tính.</p>
                     <div class="social-links">
                         <ul class="list-unstyled d-flex flex-wrap gap-3">
                             <li>
@@ -84,22 +82,22 @@
                     <h5 class="widget-title text-uppercase mb-4">Help & Info</h5>
                     <ul class="menu-list list-unstyled text-uppercase border-animation-left fs-6">
                         <li class="menu-item">
-                            <a href="#" class="item-anchor">Track Your Order</a>
+                            <a href="#" class="item-anchor">Theo dõi đơn hàng</a>
                         </li>
                         <li class="menu-item">
-                            <a href="#" class="item-anchor">Returns + Exchanges</a>
+                            <a href="#" class="item-anchor">Chính sách đổi/trả</a>
                         </li>
                         <li class="menu-item">
-                            <a href="#" class="item-anchor">Shipping + Delivery</a>
+                            <a href="#" class="item-anchor">Vận chuyển & giao hàng</a>
                         </li>
                         <li class="menu-item">
-                            <a href="#" class="item-anchor">Contact Us</a>
+                            <a href="#" class="item-anchor">Liên hệ</a>
                         </li>
                         <li class="menu-item">
-                            <a href="#" class="item-anchor">Find us easy</a>
+                            <a href="#" class="item-anchor">Tìm chúng tôi</a>
                         </li>
                         <li class="menu-item">
-                            <a href="#" class="item-anchor">Faqs</a>
+                            <a href="#" class="item-anchor">FAQs</a>
                         </li>
                     </ul>
                 </div>
@@ -107,12 +105,10 @@
             <div class="col-md-3 col-sm-6">
                 <div class="footer-menu footer-menu-004 border-animation-left">
                     <h5 class="widget-title text-uppercase mb-4">Contact Us</h5>
-                    <p>Do you have any questions or suggestions? <a href="mailto:contact@4goat.com"
+                    <p>Bạn có bất kỳ câu hỏi hoặc góp ý nào không? <a href="mailto:contact@4goat.com"
                             class="item-anchor">contact@4goat.com</a></p>
-                    <p>Do you need support? Give us a call. <a href="tel:+43 720 11 52 78" class="item-anchor">+43 720
-                            11 52
-                            78</a>
-                    </p>
+                    <p>Bạn cần hỗ trợ? Gọi cho chúng tôi nhé! <a href="tel:+43 720 11 52 78" class="item-anchor">+43 720
+                            11 52 78</a></p>
                 </div>
             </div>
         </div>
@@ -122,14 +118,14 @@
             <div class="row items-center">
                 <div class="col-md-6 d-flex">
                     <div class="shipping mr-4">
-                        <span>We ship with:</span>
+                        <span>Giao hàng:</span>
                         <div class="flex">
                             <img src="src/images/arct-icon.png" alt="icon">
                             <img src="src/images/dhl-logo.png" alt="icon">
                         </div>
                     </div>
                     <div class="payment-option">
-                        <span>Payment Option:</span>
+                        <span>Thanh toán:</span>
                         <div class="flex">
                             <img src="src/images/visa-card.png" alt="card" class="mr-2">
                             <img src="src/images/paypal-card.png" alt="card" class="mr-2">

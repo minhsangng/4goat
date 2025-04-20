@@ -6,5 +6,10 @@
             } else return 0;
         }
         
+        public function cGetNewCollection($limit) {
+            if ($this->mGetNewCollection($limit) != null) {
+                return $this->mGetNewCollection($limit);
+            } else return 0;
+        }
     }
 ?>

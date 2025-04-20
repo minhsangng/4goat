@@ -1,5 +1,8 @@
 <?php
-error_reporting(0);
+error_reporting(1);
+session_start();
+
+include_once("view/page/includeClass.php");
 
 include_once("view/layout/header.php");
 

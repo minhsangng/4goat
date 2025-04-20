@@ -7,26 +7,28 @@
             $finalPrice = 0;
 
             if (isset($_GET["id"]))
-                $resultCart = $ctrlCart->cGetCartByIDs($_GET["id"]);
+                $resultCart = $ctrlCart->cGetCartByIDs($_GET["id"], $_SESSION["customer"][2]);
             else {
                 $productIDs = implode(", ", $_SESSION["selectedCart"]);
 
-                $resultCart = $ctrlCart->cGetCartByIDs($productIDs);
+                $resultCart = $ctrlCart->cGetCartByIDs($productIDs, $_SESSION["customer"][2]);
             }
 
             if ($resultCart != null) {
                 while ($row = $resultCart->fetch_assoc()) {
                     if (!isset($cartID))
                         $cartID = $row["cartID"];
+                        
+                    $cart_detailID = $row["cart_detailID"];
 
-                    echo '<div class="flex items-center mb-6 relative">
-                            <img alt="' . $row["productName"] . '" class="w-24 h-36 object-cover rounded-md"
+                    echo '<div class="flex mb-6 relative">
+                            <img alt="' . $row["productName"] . '" class="w-24 h-36 object-cover rounded-md shadow"
                                 src="src/images/products/' . $row["image"] . '_1.png" />
                             <span class="px-2 absolute -top-2 left-20 bg-[#8c907e] rounded-full text-white">
                                 ' . ($_GET["quantity"] ? $_GET["quantity"] : $row["quantity"]) . '
                             </span>
                             <div class="ml-4 flex-1">
-                                <h2 class="text-xl! font-semibold m-0 mb-1">
+                                <h2 class="text-lg! font-semibold m-0 mb-1">
                                     ' . $row["productName"] . '
                                 </h2>
                                 <div class="flex items-center justify-between">
@@ -55,19 +57,19 @@
                 echo '<script>window.location.href = "index.php";</script>';
 
             if (isset($_POST["btnedit"])) {
-                $id = $_POST["btnedit"];
+                $id = (int) $_POST["btnedit"];
                 echo '<script>window.location.href = "index.php?p=detail&id=' . $id . '";</script>';
             }
 
             if (isset($_POST["btndel"])) {
                 if (!isset($_GET["id"]) || !isset($_GET["quantity"])) {
-                    $productID = $_POST["btndel"];
-                    $resultCartDetail = $ctrlCart->cDeleteCartByID($productID, $cartID);
+                    $productID = (int) $_POST["btndel"];
+                    $resultCartDetail = $ctrlCart->cDeleteCartByID($cart_detailID);
 
                     if (!$resultCartDetail)
-                        echo '<script>alert("Xoá sản phẩm thất bại");</script>';
+                        $ctrlMessage->errorMessage("Xóa sản phẩm thất bại");
                     else {
-                        echo '<script> if (alert("Xoá sản phẩm thất bại") != false) window.location.href = "index.php?p=checkout"; </script>';
+                        echo '<script>window.location.href = "index.php?p=checkout"; </script>';
                     }
                 } else {
                     $id = $_GET["id"];

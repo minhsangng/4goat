@@ -11,10 +11,44 @@
             else return null;
         }
         
+        public function mGetNewProduct($limit) {
+            $db = new tmdt();
+            $conn = $db->connect();
+            $sql = "SELECT * FROM product P JOIN category C ON P.categoryID = C.categoryID LIMIT $limit";
+            $result = $conn->query($sql);
+            
+            if ($result->num_rows > 0)
+                return $result;
+            else return null;
+        }
+        
+        public function mGetAllProductOnPage($limit, $offset) {
+            $db = new tmdt();
+            $conn = $db->connect();
+            $sql = "SELECT * FROM product P JOIN category C ON P.categoryID = C.categoryID LIMIT $limit OFFSET $offset";
+            $result = $conn->query($sql);
+            
+            if ($result->num_rows > 0)
+                return $result;
+            else return null;
+        }
+        
         public function mGetProductByCategory($categoryID) {
             $db = new tmdt();
             $conn = $db->connect();
             $sql = "SELECT * FROM product P JOIN category C ON P.categoryID = C.categoryID WHERE P.categoryID = $categoryID";
+            $result = $conn->query($sql);
+            
+            if ($result->num_rows > 0)
+                return $result;
+            else return null;
+        }
+        
+        public function mGetProductBySearch($search, $limit, $offset) {
+            $db = new tmdt();
+            $conn = $db->connect();
+            $searchInput = "%".$search."%";
+            $sql = "SELECT * FROM product P JOIN category C ON P.categoryID = C.categoryID WHERE P.productName LIKE '$searchInput' LIMIT $limit OFFSET $offset";
             $result = $conn->query($sql);
             
             if ($result->num_rows > 0)

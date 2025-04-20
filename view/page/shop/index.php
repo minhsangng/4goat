@@ -1,9 +1,14 @@
 <?php
 $arr_cate = [1 => "Thời trang nam", 2 => "Thời trang nữ"];
-if (isset($_GET["c"]))
+if (isset($_GET["c"])) {
     $id = (int) $_GET["c"];
-
-echo "<title>" . $arr_cate[$id] . "</title>";
+    echo "<title>" . $arr_cate[$id] . "</title>";
+} else if (isset($_GET["s"])) {
+    $search = $_GET["s"];
+    echo "<title>Kết quả cho: " . $search . "</title>";
+} else {
+    echo "<title>Tất cả sản phẩm</title>";
+}
 ?>
 
 <style>
@@ -42,25 +47,28 @@ echo "<title>" . $arr_cate[$id] . "</title>";
         <div class="mb-8 bg-[#f1f1f0] px-4 py-3 rounded-sm">
             <?php
             if (isset($_POST["new"]))
-                $productSort = "new";
+                $_SESSION["productSort"] = "new";
             else if (isset($_POST["top"]))
-                $productSort = "top";
+                $_SESSION["productSort"] = "top";
             else
-                $productSort = "pop";
+                $_SESSION["productSort"] = "pop";
+                
+            if (!isset($_POST["sort"]))
+                $_SESSION["sort"] = "ASC";
             ?>
 
             <form action="" method="POST" id="sortForm" class="flex items-center ">
                 <p class="ml-0 my-0 mr-3">Sắp xếp theo</p>
                 <button type="submit" name="pop"
-                    class="bg-<?= ($productSort == "pop" ? "[#8c907e] text-white" : "white text-gray-700") ?> px-4 py-1 rounded-sm! mr-2!">
+                    class="bg-<?= ($_SESSION["productSort"] == "pop" ? "[#8c907e] text-white" : "white text-gray-700") ?> px-4 py-1 rounded-sm! mr-2!">
                     Phổ biến
                 </button>
                 <button type="submit" name="new"
-                    class="bg-<?= ($productSort == "new" ? "[#8c907e] text-white" : "white text-gray-700") ?> px-4 py-1 rounded-sm! mr-2!">
+                    class="bg-<?= ($_SESSION["productSort"] == "new" ? "[#8c907e] text-white" : "white text-gray-700") ?> px-4 py-1 rounded-sm! mr-2!">
                     Mới nhất
                 </button>
                 <button type="submit" name="top"
-                    class="bg-<?= ($productSort == "top" ? "[#8c907e] text-white" : "white text-gray-700") ?> px-4 py-1 rounded-sm! mr-2!">
+                    class="bg-<?= ($_SESSION["productSort"] == "top" ? "[#8c907e] text-white" : "white text-gray-700") ?> px-4 py-1 rounded-sm! mr-2!">
                     Bán chạy
                 </button>
                 <select name="sort" id="" class="bg-white outline-none px-2 py-1 rounded-sm w-40"
@@ -71,7 +79,7 @@ echo "<title>" . $arr_cate[$id] . "</title>";
                 </select>
             </form>
         </div>
-        
+
         <div class="flex justify-between">
             <div class="w-2/10 pr-2">
                 <h3 class="pb-3 border-b-2 border-[#DDD] text-2xl! font-bold! flex items-center"><ion-icon
@@ -79,10 +87,13 @@ echo "<title>" . $arr_cate[$id] . "</title>";
                     Tất Cả Danh Mục</h3>
 
                 <?php
-                echo '<h4 class="text-lg! text-[#8c907e]! font-bold!"><ion-icon name="arrow-redo-outline" class="mr-2"></ion-icon>' . $arr_cate[$id] . '</h4>';
+                echo '<h4 class="text-lg! text-[#8c907e]! font-bold!"><ion-icon name="arrow-redo-outline" class="mr-2"></ion-icon>' . (isset($_GET["c"]) ? $arr_cate[$id] : "Danh mục sản phẩm") . '</h4>';
 
                 echo "<ul>";
-                $result = $ctrlProduct->cGetCategoryBySex($id);
+                if (isset($_GET["c"]))
+                    $result = $ctrlProduct->cGetCategoryBySex($id);
+                else
+                    $result = $ctrlProduct->cGetAllCategory();
 
                 if ($result != 0) {
                     while ($row = $result->fetch_assoc()) {
@@ -130,7 +141,12 @@ echo "<title>" . $arr_cate[$id] . "</title>";
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.php">Trang chủ</a></li>
                         <li class="breadcrumb-item <?= (!isset($_GET["cate"]) ? "acive" : "") ?>" aria-current="page"><a
-                                href="index.php?p=shop&c=<?= $id ?>"><?= $arr_cate["$id"] ?></a></li>
+                                href="index.php?p=shop&c=<?= $id ?>"><?php
+                                    if (isset($_GET["c"])) echo $arr_cate["$id"];
+                                    else if (isset($_GET["s"])) echo "Kết quả phù hợp cho: " . $search;
+                                    else echo "Tất cả sản phẩm";
+                                ?></a>
+                        </li>
 
                         <?php
                         if (isset($_GET["cate"])) {
@@ -145,57 +161,48 @@ echo "<title>" . $arr_cate[$id] . "</title>";
                 </nav>
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-2">
                     <?php
-                    if (isset($_GET["cate"])) {
+                    $limit = 15;
+
+                    $_SESSION["currentPage"] = isset($_SESSION["currentPage"]) ? (int) $_SESSION["currentPage"] : 1;
+
+                    if (isset($_POST["nextPage"])) {
+                        $_SESSION["currentPage"]++;
+                    }
+
+                    if (isset($_POST["lastPage"]) && $_SESSION["currentPage"] > 1) {
+                        $_SESSION["currentPage"]--;
+                    }
+
+                    $offset = ($_SESSION["currentPage"] - 1) * $limit;
+
+                    if (isset($_GET["cate"]))
                         $result = $ctrlProduct->cGetProductBySexOnCategory($id, $categoryID);
-                    } else if (isset($_POST["btnsort"])) {
+                    else if (isset($_POST["btnsort"])) {
                         $min = $_POST["minPrice"];
                         $max = $_POST["maxPrice"];
                         $rating = $_POST["rating"];
 
                         $result = $ctrlProduct->cGetProductByPrice($id, $min, $max);
                     } else if (isset($_POST["sort"])) {
-                        $sort = $_POST["sort"];
-                        
-                        $limit = 15;
+                        $sort = $_SESSION["sort"];
 
-                        $currentPage = isset($_POST["currentPage"]) ? (int) $_POST["currentPage"] : 1;
-
-                        if (isset($_POST["nextPage"])) {
-                            $currentPage++;
-                        }
-
-                        if (isset($_POST["lastPage"]) && $currentPage > 1) {
-                            $currentPage--;
-                        }
-
-                        $offset = ($currentPage - 1) * $limit;
-                        
                         $result = $ctrlProduct->cGetProductSortPrice($sort, $id, $limit, $offset);
-                    } else {
-                        $limit = 15;
-
-                        $currentPage = isset($_POST["currentPage"]) ? (int) $_POST["currentPage"] : 1;
-
-                        if (isset($_POST["nextPage"])) {
-                            $currentPage++;
-                        }
-
-                        if (isset($_POST["lastPage"]) && $currentPage > 1) {
-                            $currentPage--;
-                        }
-
-                        $offset = ($currentPage - 1) * $limit;
-
+                    } else if (isset($_GET["s"])) {
+                        $search = $_GET["s"];
+                        $result = $ctrlProduct->cGetProductBySearch($search, $limit, $offset);
+                    } else if (isset($_GET["c"]))
                         $result = $ctrlProduct->cGetProductBySexOnPage($id, $limit, $offset);
-                    }
+                    else
+                        $result = $ctrlProduct->cGetAllProductOnPage($limit, $offset);
 
-                    if ($result != 0) {
+                    if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             echo '<div class="border-1 border-[#DDD] rounded-lg pb-2 cursor-pointer relative">
-                                <form method="POST">
-                                    <button type="submit" class="absolute top-2 right-2 z-50" name="addwishlist" value="' . $row["productID"] . '"><i class="fa-regular fa-heart text-white text-xl"></i></button>
+                                <form method="POST" class="group">
+                                    <button type="button" onclick="addWishlist(' . $id . ', ' . $row["productID"] . ')" class="drop-shadow-2xl drop-shadow-red-900 absolute top-2 right-2 z-50" name="addwishlist" value="' . $row["productID"] . '"><i class="' . (isset($_SESSION["wishlistItems"]) && in_array((int) $row["productID"], $_SESSION["wishlistItems"]) ? "fa-solid" : "fa-regular") . ' fa-heart text-[#8c907e] text-xl"></i></button>
+                                    <span class="hidden group-hover:flex justify-center items-center transition linear-ease w-4 bg-white p-1 shadow rounded-lg absolute top-8 right-[10px] [writing-mode:vertical-rl] [text-orientation:upright] text-center text-xs">Yêu thích</span>
                                 </form>
-                                <a href="index.php?p=detail&id=' . $row["productID"] . '" class="flex flex-col items-center z-40 group-hover:opacity-75">
+                                <a href="index.php?p=detail&id=' . $row["productID"] . '" class="flex flex-col items-center z-40">
                                     <img alt="' . $row["productName"] . '" class="mb-1 w-full h-54 rounded-tl-md rounded-tr-md" src="src/images/products/' . $row["image"] . '_1.png"/>
                                     <div class="w-full px-2">
                                         <p class="text-lg mx-0 mb-2 mt-1 h-fit overflow-hidden text-ellipsis whitespace-nowrap">
@@ -209,33 +216,27 @@ echo "<title>" . $arr_cate[$id] . "</title>";
                                     </div>
                                 </a>
                             </div>';
-
-                            $arr_id[] = $row["productID"];
                         }
                     } else
-                        echo "Không có dữ liệu";
-
-                    if (isset($_POST["addwishlist"])) {
-                        $productID = (int) $_POST["addwishlist"];
-
-                        if (!in_array($productID, array_column($arr_id, "productID"))) {
-                            $resultWishList = $ctrlWishList->cAddToWishList($productID, $customerID);
-
-                            echo "<script> if (alert('Thêm wishlist thành công!') != false) window.location.href = 'index.php?p=shop&c=" . $id . "';</script>";
-                        }
-                        echo "aaa";
-                    }
+                        echo "<p>Chưa có dữ liệu</p>";
                     ?>
                 </div>
             </div>
         </div>
 
         <form action="" method="POST" class="w-full mx-auto mt-4 flex justify-end">
-            <button type="submit" name="lastPage" <?php echo ($currentPage == 1) ? "disabled" : ""; ?>
+            <button type="submit" name="lastPage" <?php echo ($_SESSION["currentPage"] == 1) ? "disabled" : ""; ?>
                 class="btn bg-white border-1! border-[#DDD]! text-gray-700! hover:bg-gray-100! w-fit! rounded-md!"><i
                     class="fa-solid fa-arrow-left"></i></button>
-            <input type="text" name="currentPage" value="<?php echo $currentPage; ?>" readonly
-                class="btn bg-white border-1! border-[#DDD]! text-gray-700! hover:bg-gray-100! rounded-md! mx-2! w-12!" />
+            <div class="bg-white border-1! border-[#DDD]! rounded-md! mx-2! flex items-center">
+                <input type="text" name="currentPage" value="<?php echo $_SESSION["currentPage"]; ?>" readonly
+                    class="btn text-gray-700! w-9!" />/
+                <span class="pl-1 pr-3 w-9">
+                    <?php
+                    echo $ctrlProduct->cGetAllProduct()->num_rows / 15;
+                    ?>
+                </span>
+            </div>
             <button type="submit" name="nextPage" <?php echo ($result->num_rows < 15) ? "disabled" : ""; ?>
                 class="btn bg-white border-1! border-[#DDD]! text-gray-700! hover:bg-gray-100! w-fit! rounded-md!"><i
                     class="fa-solid fa-arrow-right"></i></button>
@@ -268,4 +269,40 @@ echo "<title>" . $arr_cate[$id] . "</title>";
             ratingText.value = selectedRating;
         });
     });
+
+    function addWishlist(sex, productID) {
+        $.ajax({
+            url: "view/page/shop/process.php",
+            method: "POST",
+            dataType: "json",
+            data: {
+                sex: sex,
+                productID: productID,
+            },
+            success: function (response) {
+                if (response.status == "success")
+                    window.location.href = "index.php?p=shop&c=" + response.sex;
+                else if (response.status == "warning")
+                    message(response.status, response.message);
+            }
+        });
+    }
+
+    function message(status, message) {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 1500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: status,
+            title: message
+        });
+    }
 </script>

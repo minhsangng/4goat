@@ -5,80 +5,79 @@
     <main>
         <!-- New Collections Section -->
         <section class="container mx-auto px-4 py-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 h-[80vh]">
-                <div>
-                    <img alt="Model wearing a red oversized coat" class="h-[80vh]"
-                        src="https://storage.googleapis.com/a1aa/image/rP-pm0wMf0854LHEp8W4NR2f_UpOknXw3-l62DbNFzs.jpg" />
-                </div>
-                <div>
-                    <div class="flex justify-between items-start h-1/3">
-                        <h3 class="text-2xl font-bold">
-                            NEW COLLECTIONS
-                        </h3>
-                        <a class="text-sm mt-10" href="#">
-                            Xem chi tiết
-                            <i class="fas fa-arrow-right">
-                            </i>
-                        </a>
-                    </div>
-                    <div class="grid grid-cols-2 gap-x-10 h-2/3">
-                        <img alt="Model wearing a black oversized coat" class="h-full w-72"
-                            src="https://storage.googleapis.com/a1aa/image/fHsi_8NW2QWqxCwSW6-R4sffUxupqfWPudbNiCEL63Y.jpg" />
 
-                        <div>
-                            <?php
-                            $result = $ctrlCollection->cGetAllCollection();
-
-                            if ($result == null) {
-                                echo '<p>Không có dữ liệu</p>';
-                            } else {
-                                $n = 0;
-
-                                while ($row = $result->fetch_assoc()) {
-                                    echo '<h4>BST: ' . $row["collectionName"] . '</h4>';
-                                    echo '<p>'.$row["author"].'</p>';
-
-                                    echo '<p class="text-md indent-8">Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit autem quia numquam, ipsam hic aperiam. Sunt beatae consequuntur nobis expedita exercitationem magnam cupiditate, molestias vitae obcaecati, voluptatem sint amet omnis!</p>';
-                                    $n++;
-                                    if ($n >= 1) break;
-                                }
-                            }
-                            ?>
-                        </div>
-                    </div>
+            <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <?php
+                    $result = $ctrlCollection->cGetNewCollection(10);
+                    $n = 0;
+                    while ($row = $result->fetch_assoc()) {
+                        echo '<div class="carousel-item '.($n == 0 ? "active" : "").'" data-bs-interval="2000">
+                                    <div class="grid grid-cols-2 gap-4 h-[70vh]">
+                                        <div class="group overflow-hidden">
+                                            <img alt="' . $row["collectionName"] . '"
+                                                class="h-[70vh] w-full hover:scale-110 transition ease-linear"
+                                                src="src/images/' . $row["imageCollection"] . '_1.png" />
+                                        </div>
+                                        <div class="flex flex-col justify-between">
+                                            <div class="flex justify-between items-end mb-4">
+                                                <h3 class="text-2xl font-bold m-0">
+                                                    BỘ SƯU TẬP MỚI
+                                                </h3>
+                                                <a class="text-sm" href="#">
+                                                    Xem chi tiết
+                                                    <i class="fas fa-arrow-right">
+                                                    </i>
+                                                </a>
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-x-10">
+                                                <div class="flex flex-col space-y-3">
+                                                    <img alt="' . $row["collectionName"] . '" class="h-52 w-72"
+                                                        src="src/images/' . $row["imageCollection"] . '_2.png" />
+                                                    <img alt="' . $row["collectionName"] . '" class="h-52 w-72"
+                                                        src="src/images/' . $row["imageCollection"] . '_3.png" />
+                                                </div>
+            
+                                                <div>
+                                                    <h4>BST: ' . $row["collectionName"] . '</h4>
+                                                    <p>NTK: ' . $row["author"] . '</p>
+            
+                                                    <p class="text-md indent-8">' . $row["description"] . '</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>';
+                                $n++;
+                    }
+                    ?>
                 </div>
             </div>
+
         </section>
 
         <!-- Ready-to-Wear Section -->
         <section class="container mx-auto px-4 py-8">
-            <div class="flex justify-between items-center">
+            <div class="flex items-center">
                 <h2 class="text-2xl font-bold">
                     Fashion Designers
                 </h2>
-                <a class="text-sm" href="#">
-                    Tất cả
-                    <i class="fas fa-arrow-right">
-                    </i>
-                </a>
             </div>
-            <div class="grid grid-cols-5 gap-8 mt-4">
+            <div class="grid grid-cols-10 gap-4 mt-4">
                 <?php
+                $result = $ctrlCollection->cGetAllCollection();
+
                 if (!$result) {
                     echo '<p>Không có dữ liệu</p>';
                 } else {
-                    $n = 0;
                     while ($row = $result->fetch_assoc()) {
-                        echo '<div class="text-center">
-                                <img alt=""
-                                    src="https://storage.googleapis.com/a1aa/image/HiwXqZ6Ilt_NlxW3RxGTHlZqEeGRhDuh8TsGlifAfnw.jpg"/>
+                        echo '<div class="text-center hover:cursor-pointer hover:scale-110 hover:saturate-150 transition ease-linear">
+                                <img alt="' . $row["author"] . '" class="h-32" 
+                                    src="src/images/' . $row["imageAuthor"] . '.png" />
                                 <p class="mt-2">
                                     ' . $row["author"] . '
                                 </p>
                             </div>';
-                        $n++;
-                        if ($n >= 5)
-                            break;
                     }
                 }
                 ?>

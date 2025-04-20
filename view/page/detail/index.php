@@ -31,7 +31,7 @@ if ($result != 0)
             <div class="flex-1">
                 <div class="rounded-lg">
                     <?php
-                    echo '<img alt="' . $row["productName"] . '" class="w-full h-96 rounded-md" src="src/images/products/' . $row["image"] . '_1.png"/>';
+                    echo '<img alt="' . $row["productName"] . '" class="w-full h-[400px] rounded-md" src="src/images/products/' . $row["image"] . '_1.png"/>';
                     ?>
                 </div>
                 <div class="flex space-x-4 mt-4">
@@ -56,40 +56,38 @@ if ($result != 0)
                                 </li>
                             </ol>
                         </nav>
-                        <h1 class="text-4xl! font-bold border-l-2 pl-4">
+                        <h1 class="text-3xl! font-bold border-l-2 pl-4">
                             <?= $row["productName"] ?>
                         </h1>
-                        
-                                <?php
-                                $resultReview = $ctrlProduct->cGetStarRate($productID);
-                                if (isset($resultReview->num_rows) > 0) {
-                                    echo '<div id="rating" class="flex items-center space-x-2">
-                                            <div class="flex items-center">';
-                                    while ($rowReview = $resultReview->fetch_assoc()) {
 
-                                        list($rate, $dec) = explode(".", round(number_format($rowReview["AvgRate"], 1, ",", ".") * 2) / 2);
-    
-                                        for ($i = 0; $i < (int) $rate; $i++)
-                                            echo '<i class="fas fa-star text-yellow-500"></i>';
-    
-                                        if ($dec != 0)
-                                            echo '<i class="fa-solid fa-star-half text-yellow-500"></i>';
-                                    }
-                                    
-                                    echo '</div>
-                                            <span class="text-gray-500">
-                                                <?= $rowReview["CountRV"] ?> bài đánh giá
-                                            </span>
-                                        </div>';
+                        <div id="rating" class="flex items-center space-x-2">
+                            <?php
+                            $resultReview = $ctrlProduct->cGetStarRate($productID);
+                            if (isset($resultReview->num_rows) > 0) {
+                                echo '<div class="flex items-center">';
+                                while ($rowReview = $resultReview->fetch_assoc()) {
+
+                                    list($rate, $dec) = explode(".", round(number_format($rowReview["AvgRate"], 1, ",", ".") * 2) / 2);
+
+                                    for ($i = 0; $i < (int) $rate; $i++)
+                                        echo '<i class="fas fa-star text-yellow-500"></i>';
+
+                                    if ($dec != 0)
+                                        echo '<i class="fa-solid fa-star-half text-yellow-500"></i></div>';
                                 }
-                                ?>
+                            }
+                            ?>
+                            <span class="text-gray-500">
+                                <?= ($resultReview->num_rows > 0 ? $rowReview["CountRV"] : "Chưa có") ?> bài đánh giá
+                            </span>
+                        </div>
                         <div class="text-3xl font-bold">
                             <p class="m-0 p-3 rounded-sm bg-[#DDD]">
                                 <?php echo number_format($row["price"], 0, ",", ".") ?>
                                 <sup>đ</sup>
                             </p>
                         </div>
-                        <div class="space-y-8">
+                        <div class="space-y-4">
                             <div class="flex items-center space-x-2">
                                 <span class="text-gray-700">
                                     Màu
@@ -127,7 +125,17 @@ if ($result != 0)
                                 <div class="flex items-center justify-center space-x-2 px-2 py-1 border border-[#DDD]">
                                     <button type="button" class="decrease px-2"><i
                                             class="fa-solid fa-minus"></i></button>
-                                    <input type="number" value="1" name="quantity"
+                                    <input type="number" value="<?php
+                                    if (isset($_SESSION["customer"])) {
+                                        $resultCart = $ctrlCart->cGetCartByIDs($row["productID"], $_SESSION["customer"][2]);
+
+                                    if ($resultCart->num_rows > 0) {
+                                        $rowCart = $resultCart->fetch_assoc();
+                                        echo $rowCart["quantity"];
+                                    } else
+                                        echo 1;
+                                    } else echo 1;
+                                    ?>" name="quantity"
                                         class="quantity w-10 text-center border-l border-r border-[#DDD]">
                                     <button type="button" class="increase px-2"><i
                                             class="fa-solid fa-plus"></i></button>
@@ -171,26 +179,24 @@ if (isset($_POST["btnaddcart"])) {
     $color = $_SESSION["selected"]["color"];
     $size = $_SESSION["selected"]["size"];
 
-    if ($ctrlCart->cCheckCart($_SESSION["customer"][2]) != 0) {
-        $resultCart = $ctrlCart->cCheckCart($_SESSION["customer"][2]);
+    $resultCart = $ctrlCart->cCheckCart($_SESSION["customer"][2]);
+    if ($resultCart != 0) {
         $cartID = (int) $resultCart["cartID"];
 
-        $resultProduct = $ctrlCart->cCheckProduct($cartID, $productID);
+        $resultCartDetail = $ctrlCart->cAddToCartDetail($cartID, $productID, $price, $quantity, $color, $size, 0, NULL);
 
-        if ($resultProduct == 0) {
-            $resultCartDetail = $ctrlCart->cAddToCartDetail($cartID, $productID, $price, $quantity, $color, $size, 0, NULL);
-
-            if (!$resultCartDetail)
-                echo "<script>alert('Thêm giỏ hàng thất bại');</script>";
-            else
-                echo "<script> if (alert('Thêm giỏ hàng thành công') != false) window.location.href = 'index.php?p=detail&id=" . $productID . "';</script>";
-        } else
-            echo "<script>alert('Sản phẩm này đã thêm vào giỏ hàng');</script>";
+        if (!$resultCartDetail)
+            $ctrlMessage->errorMessage("Thêm vào giỏ hàng thất bại");
+        else {
+            echo "<script>
+                    window.location.href = 'index.php?p=detail&id=" . $productID . "';
+                </script>";
+        }
     } else {
         $resultCart = $ctrlCart->cAddToCart($_SESSION["customer"][2]);
 
         if (!$resultCart)
-            echo "<p>Thêm giỏ hàng thất bại</p>";
+            $ctrlMessage->errorMessage("Thêm vào giỏ hàng thất bại");
         else
             $resultCartDetail = $ctrlCart->cAddToCartDetail($resultCart, $productID, $price, $quantity, $color, $size, 0, NULL);
     }
@@ -231,7 +237,7 @@ if (isset($_POST["btnnext"])) {
             }
         });
     });
-
+    
     let productID = "";
     let selectedColor = "";
     let selectedSize = "";
@@ -245,8 +251,8 @@ if (isset($_POST["btnnext"])) {
         selectedColor = $(this).val();
         productID = $(this).attr("data-id");
 
-        $('.color').removeClass('bg-blue-400 text-white');
-        $(this).addClass('bg-blue-400 text-white');
+        $(".color").removeClass("bg-blue-400 text-white");
+        $(this).addClass("bg-blue-400 text-white");
 
         sendSelection();
     });
@@ -255,8 +261,8 @@ if (isset($_POST["btnnext"])) {
         selectedSize = $(this).val();
         productID = $(this).attr("data-id");
 
-        $('.size').removeClass('bg-blue-400 text-white');
-        $(this).addClass('bg-blue-400 text-white');
+        $(".size").removeClass("bg-blue-400 text-white");
+        $(this).addClass("bg-blue-400 text-white");
 
         sendSelection();
     });
@@ -271,7 +277,6 @@ if (isset($_POST["btnnext"])) {
                 size: selectedSize
             },
             success: function (response) {
-                console.log("Đã gửi:", response);
             }
         });
     }

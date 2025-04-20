@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php
-  error_reporting(1);
-  session_start();
-  
-  $arr_menu = ["statistic" => "Thống kê đơn hàng", "handle" => "Xử lý đơn hàng", "post" => "Bài viết mới", "product" => "Sản phẩm mới"];
-  
-  if (isset($_GET["p"]))
-    $title = $arr_menu[$_GET["p"]];
-  else $title = "Tổng quan";
+error_reporting(1);
+session_start();
+
+$arr_menu = ["statistic" => "Thống kê đơn hàng", "handle" => "Xử lý đơn hàng", "post" => "Bài viết mới", "product" => "Sản phẩm mới"];
+
+if (isset($_GET["p"]))
+  $title = $arr_menu[$_GET["p"]];
+else
+  $title = "Tổng quan";
 ?>
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -42,12 +44,17 @@
   <link id="pagestyle" href="assets/css/argon-dashboard.css?v=2.1.0" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css">
 
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
   <!-- CDN Framework tailwindcss -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
-<body class="g-sidenav-show bg-gray-100">
-  <div class="min-height-300 bg-dark position-absolute w-100"></div>
+<body class="g-sidenav-show">
+  <div class="min-height-300 bg-[#8c907e]! position-absolute w-100"></div>
   <aside
     class="sidenav bg-white navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-4 "
     id="sidenav-main">
@@ -117,10 +124,10 @@
       <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="javascript:;">Pages</a></li>
-            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><?=$title?></li>
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="javascript:;">Trang</a></li>
+            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><?= $title ?></li>
           </ol>
-          <h6 class="font-weight-bolder text-white mb-0 mt-2 text-xl!"><?=$title?></h6>
+          <h6 class="font-weight-bolder text-white mb-0 mt-2 text-xl!"><?= $title ?></h6>
         </nav>
         <div class="collapse navbar-collapse visible! mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
           <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -139,7 +146,7 @@
               <ul class="dropdown-menu dropdown-menu-end h-auto! top-6! px-2 py-3 me-sm-n4"
                 aria-labelledby="dropdownSignInButton">
                 <li class="mb-2 ml-2">
-                  <h3 class="border-radius-md m-0">Xin chào, <?= $_SESSION["user"][0] ?>!</h3>
+                  <h3 class="border-radius-md m-0 text-lg">Xin chào, <?= $_SESSION["user"][0] ?>!</h3>
                 </li>
                 <li class="mb-2">
                   <a class="dropdown-item border-radius-md hover:no-underline!" href="javascript:;">
@@ -148,7 +155,8 @@
                 </li>
                 <li class="mb-2">
                   <form action="" method="POST" class="dropdown-item border-radius-md"><button type="submit"
-                      name="btnlogout" class="m-0 text-[1rem]! h-6"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>Đăng
+                      name="btnlogout" class="m-0 text-[1rem]! h-6"><i
+                        class="fa-solid fa-arrow-right-from-bracket mr-2"></i>Đăng
                       xuất</button></form>
                 </li>
               </ul>
@@ -163,75 +171,21 @@
                 aria-expanded="false">
                 <i class="fa fa-bell cursor-pointer"></i>
               </a>
-              <ul class="dropdown-menu dropdown-menu-end top-6! px-2 py-3 me-sm-n4"
+              <ul class="dropdown-menu dropdown-menu-end top-6! px-2 py-3 me-sm-n4 w-62"
                 aria-labelledby="dropdownMenuButton">
                 <li class="mb-2">
                   <a class="dropdown-item border-radius-md" href="javascript:;">
-                    <div class="d-flex py-1">
+                    <div class="d-flex py-1 space-x-4">
                       <div class="my-auto">
-                        <img src="assets/img/team-2.jpg" class="avatar avatar-sm  me-3 ">
+                        <img src="assets/img/team-2.jpg" class="avatar avatar-sm me-3 rounded-full!">
                       </div>
                       <div class="d-flex flex-column justify-content-center">
                         <h6 class="text-sm font-weight-normal mb-1">
-                          <span class="font-weight-bold">New message</span> from Laur
+                          <span class="font-weight-bold">1 tin nhắn mới</span> từ nchou
                         </h6>
                         <p class="text-xs text-secondary mb-0">
                           <i class="fa fa-clock me-1"></i>
-                          13 minutes ago
-                        </p>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="mb-2">
-                  <a class="dropdown-item border-radius-md" href="javascript:;">
-                    <div class="d-flex py-1">
-                      <div class="my-auto">
-                        <img src="assets/img/small-logos/logo-spotify.svg"
-                          class="avatar avatar-sm bg-gradient-dark  me-3 ">
-                      </div>
-                      <div class="d-flex flex-column justify-content-center">
-                        <h6 class="text-sm font-weight-normal mb-1">
-                          <span class="font-weight-bold">New album</span> by Travis Scott
-                        </h6>
-                        <p class="text-xs text-secondary mb-0">
-                          <i class="fa fa-clock me-1"></i>
-                          1 day
-                        </p>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item border-radius-md" href="javascript:;">
-                    <div class="d-flex py-1">
-                      <div class="avatar avatar-sm bg-gradient-secondary  me-3  my-auto">
-                        <svg width="12px" height="12px" viewBox="0 0 43 36" version="1.1"
-                          xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                          <title>credit-card</title>
-                          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <g transform="translate(-2169.000000, -745.000000)" fill="#FFFFFF" fill-rule="nonzero">
-                              <g transform="translate(1716.000000, 291.000000)">
-                                <g transform="translate(453.000000, 454.000000)">
-                                  <path class="color-background"
-                                    d="M43,10.7482083 L43,3.58333333 C43,1.60354167 41.3964583,0 39.4166667,0 L3.58333333,0 C1.60354167,0 0,1.60354167 0,3.58333333 L0,10.7482083 L43,10.7482083 Z"
-                                    opacity="0.593633743"></path>
-                                  <path class="color-background"
-                                    d="M0,16.125 L0,32.25 C0,34.2297917 1.60354167,35.8333333 3.58333333,35.8333333 L39.4166667,35.8333333 C41.3964583,35.8333333 43,34.2297917 43,32.25 L43,16.125 L0,16.125 Z M19.7083333,26.875 L7.16666667,26.875 L7.16666667,23.2916667 L19.7083333,23.2916667 L19.7083333,26.875 Z M35.8333333,26.875 L28.6666667,26.875 L28.6666667,23.2916667 L35.8333333,23.2916667 L35.8333333,26.875 Z">
-                                  </path>
-                                </g>
-                              </g>
-                            </g>
-                          </g>
-                        </svg>
-                      </div>
-                      <div class="d-flex flex-column justify-content-center">
-                        <h6 class="text-sm font-weight-normal mb-1">
-                          Payment successfully completed
-                        </h6>
-                        <p class="text-xs text-secondary mb-0">
-                          <i class="fa fa-clock me-1"></i>
-                          2 days
+                          13 phút trước
                         </p>
                       </div>
                     </div>

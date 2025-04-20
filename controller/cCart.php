@@ -16,24 +16,24 @@
             return $this->mAddToCartDetail($cartID, $productID, $price, $quantity, $color, $size, $discount, $promotionID);
         }
         
-        public function cGetAllCart() {
-            if ($this->mGetAllCart() != null) {
-                return $this->mGetAllCart();
+        public function cGetCartByCustomer($customerID) {
+            if ($this->mGetCartByCustomer($customerID) != null) {
+                return $this->mGetCartByCustomer($customerID);
             } else return 0;
         }
         
-        public function cGetCartByIDs($productIDs) {
-            if ($this->mGetCartByIDs($productIDs) != null) {
-                return $this->mGetCartByIDs($productIDs);
+        public function cGetCartByIDs($productIDs, $customerID) {
+            if ($this->mGetCartByIDs($productIDs, $customerID) != null) {
+                return $this->mGetCartByIDs($productIDs, $customerID);
             } else return 0;
         }
         
-        public function cDeleteCartByID($productID, $cartID) {
-            return $this->mDeleteCartByID($productID, $cartID);
+        public function cDeleteCartByID($cart_detailID) {
+            return $this->mDeleteCartByID($cart_detailID);
         }
         
-        public function cUpdateQuantityCart($productID, $cartID, $quantity) {
-            return $this->mUpdateQuantityCart($productID, $cartID, $quantity);
+        public function cUpdateQuantityCart($productID, $cart_detailID, $quantity, $customerID) {
+            return $this->mUpdateQuantityCart($productID, $cart_detailID, $quantity, $customerID);
         }
     }
 ?>

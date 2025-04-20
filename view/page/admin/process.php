@@ -1,9 +1,11 @@
 <?php
 session_start();
+header('Content-Type: application/json');
 
 $productID = $_POST["productID"];
 $productName = $_POST["productName"];
 $price = $_POST["price"];
+$quantity = $_POST["qty"];
 
 if (!isset($_SESSION["orders"]))
     $_SESSION["orders"] = [];
@@ -15,10 +17,10 @@ if (isset($_SESSION["orders"][$productID])) {
         "productID" => $productID,
         "productName" => $productName,
         "price" => $price,
-        "qty" => 1
+        "qty" => $quantity
     ];
 }
 
-header('Content-Type: application/json');
 echo json_encode($_SESSION["orders"]);
+exit();
 ?>

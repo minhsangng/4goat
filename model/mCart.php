@@ -41,7 +41,7 @@ class mCart
     {
         $db = new tmdt();
         $conn = $db->connect();
-        
+
         if ($promotionID == null)
             $sql = "INSERT INTO `cart_detail` (cartID, productID, price, quantity, size, color, discount)
                     VALUES ($cartID, $productID, $price, $quantity, '$size', '$color', $discount)";
@@ -56,11 +56,11 @@ class mCart
         return true;
     }
 
-    public function mGetAllCart()
+    public function mGetCartByCustomer($customerID)
     {
         $db = new tmdt();
         $conn = $db->connect();
-        $sql = "SELECT * FROM cart C JOIN cart_detail CD ON C.cartID = CD.cartID JOIN product P ON P.productID = CD.productID";
+        $sql = "SELECT * FROM cart C JOIN cart_detail CD ON C.cartID = CD.cartID JOIN product P ON P.productID = CD.productID WHERE C.customerID = $customerID";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0)
@@ -68,12 +68,12 @@ class mCart
         else
             return null;
     }
-    
-    public function mGetCartByIDs($productIDs)
+
+    public function mGetCartByIDs($productIDs, $customerID)
     {
         $db = new tmdt();
         $conn = $db->connect();
-        $sql = "SELECT * FROM cart C JOIN cart_detail CD ON C.cartID = CD.cartID JOIN product P ON P.productID = CD.productID WHERE CD.productID IN ($productIDs)";
+        $sql = "SELECT * FROM cart C JOIN cart_detail CD ON C.cartID = CD.cartID JOIN product P ON P.productID = CD.productID WHERE C.customerID = $customerID AND CD.productID IN ($productIDs)";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0)
@@ -81,12 +81,12 @@ class mCart
         else
             return null;
     }
-    
-    public function mDeleteCartByID($productID, $cartID)
+
+    public function mDeleteCartByID($cart_detailID)
     {
         $db = new tmdt();
         $conn = $db->connect();
-        $sql = "DELETE FROM cart_detail WHERE productID = $productID AND cartID = $cartID";
+        $sql = "DELETE FROM cart_detail WHERE cart_detailID = $cart_detailID";
         $result = $conn->query($sql);
 
         if (!$result)
@@ -94,12 +94,12 @@ class mCart
         else
             return true;
     }
-    
-    public function mUpdateQuantityCart($productID, $cartID, $quantity)
+
+    public function mUpdateQuantityCart($productID, $cart_detailID, $quantity, $customerID)
     {
         $db = new tmdt();
         $conn = $db->connect();
-        $sql = "UPDATE cart_detail SET quantity = $quantity WHERE productID = $productID AND cartID = $cartID";
+        $sql = "UPDATE cart_detail SET quantity = $quantity WHERE productID = $productID AND cart_detailID = $cart_detailID AND productID = $productID";
         $result = $conn->query($sql);
 
         if (!$result)

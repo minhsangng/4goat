@@ -4,6 +4,7 @@ error_reporting(1);
 session_start();
 
 include_once("../../../model/connect.php");
+include_once("../../../model/message.php");
 include_once("../../../model/mProduct.php");
 include_once("../../../model/mOrder.php");
 include_once("../../../model/mCustomer.php");
@@ -12,6 +13,7 @@ include_once("../../../controller/cProduct.php");
 include_once("../../../controller/cOrder.php");
 include_once("../../../controller/cCustomer.php");
 
+$ctrlMessage = new message();
 $ctrlProduct = new cProduct();
 $ctrlOrder = new cOrder();
 $ctrlCustomer = new cCustomer();
@@ -41,6 +43,9 @@ $ctrlCustomer = new cCustomer();
             font-family: 'Roboto', sans-serif;
         }
     </style>
+
+    <!-- CDN Sweet Alert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-gray-100">
@@ -212,7 +217,7 @@ $ctrlCustomer = new cCustomer();
                             Thêm voucher
                         </button>
                         <div id="boxpromotion">
-                            <input type="text" name="" id="" class="w-full p-1 border-2 mt-2 rounded-md">
+                            <input type="text" name="voucher" id="" class="w-full p-1 border-2 mt-2 rounded-md">
                         </div>
                     </div>
                     <div class="w-full">
@@ -239,30 +244,34 @@ $ctrlCustomer = new cCustomer();
     if (isset($_POST["btnsubmit"])) {
         $name = $_POST["customerName"];
         $phone = $_POST["phoneNumber"];
-        $paymentMethod = $_POSt["paymentMethod"];
-        
-        if ($paymentMethod == 1)
-        $finalPrice = (int)str_replace(['.', 'đ', ' '], '',$_POST["finalPrice"]);
+        $voucher = $_POST["voucher"];
+        $paymentMethod = $_POST["paymentMethod"];
 
-        if ($name != "" && $phone != "") {
-            $resultCustomer = $ctrlCustomer->cInsertCustomer($name, $phone, NULL, NULL, NULL, NULL, 0);
+        $finalPrice = (int) str_replace(['.', 'đ', ' '], '', $_POST["finalPrice"]);
+
+        if (empty($name) || empty($phone)) {
+            $ctrlMessage->warningMessage("Nhập đầy đủ thông tin khách hàng");
+        } else {
+            $resultCustomer = $ctrlCustomer->cInsertCustomerPos($name, $phone);
             if ($resultCustomer == null)
-                echo '<p>Tạo khách hàng thất bại</p>';
+                $ctrlMessage->errorMessage("Tạo khách hàng mới thất bại");
             else {
                 $customerID = $resultCustomer;
-                $resultOrder = $ctrlOrder->cInsertOrder($_SESSION["user"][2], $customerID, $finalPrice, $paymentMethod);
+                $resultOrder = $ctrlOrder->cInsertOrder((int) $_SESSION["user"][2], $customerID, $paymentMethod);
 
                 if ($resultOrder == null)
-                    echo '<p>Tạo đơn hàng thất bại</p>';
+                    $ctrlMessage->errorMessage("Tạo đơn hàng mới thất bại");
                 else {
-                    foreach ($_SESSION["orders"] as $item) {
-                        $orderID = $resultOrder;
-                        $resultOD = $ctrlOrder->cInsertOrderDetail($orderID, $item["productID"], $item["qty"], $item["price"]);
-                        if ($resultOD == null)
-                            echo '<p>Tạo chi tiết đơn hàng thất bại</p>';
+                    foreach ($_SESSION["orders"] as $productID => $item) {
+                        $orderID = (int) $resultOrder;
+                        $resultOD = $ctrlOrder->cInsertOrderDetail($orderID, (int) $item["productID"], (int) $item["qty"], (int) $item["price"]);
+                        if ($resultOD == null) {
+                            $ctrlMessage->errorMessage("Nhập chi tiết đơn hàng thất bại");
+                        }
                     }
-                    
-                    echo '<script>alert("Tạo đơn hàng thành công");</script>';
+
+                    $ctrlMessage->successMessage("Tạo đơn hàng thành công");
+                    unset($_SESSION["orders"]);
                 }
             }
         }
@@ -281,7 +290,7 @@ $ctrlCustomer = new cCustomer();
         </div>
     </footer>
 
-    <script src="../../../src/js/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
             let finalPrice = 0;
@@ -301,13 +310,13 @@ $ctrlCustomer = new cCustomer();
                     data: {
                         productID: productID,
                         productName: productName,
-                        price: price
+                        price: price,
+                        qty: 1
                     },
                     success: function (res) {
-                        console.log("Session sau khi cập nhật:", res);
+                        console.log(res);
                     },
                     error: function (xhr, status, error) {
-                        console.error("Lỗi khi gửi AJAX:", error);
                     }
                 });
 
@@ -333,7 +342,7 @@ $ctrlCustomer = new cCustomer();
                                 </div>
                                 <div class="flex items-center justify-center space-x-2">
                                     <button type="button" class="decrease"><i class="fa-solid fa-minus"></i></button>
-                                    <input type="text" value="1" class="quantity w-10 text-center">
+                                    <input type="text" name="quantity" value="1" class="quantity w-10 text-center">
                                     <button type="button" class="increase"><i class="fa-solid fa-plus"></i></button>
                                 </div>
                             </div>`;
@@ -356,6 +365,28 @@ $ctrlCustomer = new cCustomer();
                 container.find(".price").text(totalPrice);
 
                 updateFinalPrice();
+
+                let productID = container.data("id");
+                let productName = container.find(".w-full.text-left").text().trim();
+                let price = unitPrice;
+
+                $.ajax({
+                    url: "process.php",
+                    method: "POST",
+                    dataType: "json",
+                    data: {
+                        productID: productID,
+                        productName: productName,
+                        price: price,
+                        qty: newQty
+                    },
+                    success: function (res) {
+                        console.log(res);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX error:", error);
+                    }
+                });
             });
 
             $(document).on("click", ".decrease", function () {
@@ -373,6 +404,28 @@ $ctrlCustomer = new cCustomer();
                     container.find(".price").text(totalPrice);
 
                     updateFinalPrice();
+
+                    let productID = container.data("id");
+                    let productName = container.find(".w-full.text-left").text().trim();
+                    let price = parseFloat(container.data("price"));
+
+                    $.ajax({
+                        url: "process.php",
+                        method: "POST",
+                        dataType: "json",
+                        data: {
+                            productID: productID,
+                            productName: productName,
+                            price: price,
+                            qty: newQty
+                        },
+                        success: function (res) {
+                            console.log(res);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("AJAX error:", error);
+                        }
+                    });
                 }
             });
 
@@ -391,6 +444,28 @@ $ctrlCustomer = new cCustomer();
                 container.find(".price").text(totalPrice);
 
                 updateFinalPrice();
+
+                let productID = container.data("id");
+                let productName = container.find(".w-full.text-left").text().trim();
+                let price = parseFloat(container.data("price"));
+
+                $.ajax({
+                    url: "process.php",
+                    method: "POST",
+                    dataType: "json",
+                    data: {
+                        productID: productID,
+                        productName: productName,
+                        price: price,
+                        qty: qty
+                    },
+                    success: function (res) {
+                        console.log(res);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("AJAX error:", error);
+                    }
+                });
             });
 
             function updateFinalPrice() {

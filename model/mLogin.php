@@ -26,7 +26,8 @@ class mLogin
                     $_SESSION["customer"] = [$row["loginName"], $row["password"], $row["customerID"]];
 
                     echo "<script>window.location.href = '../../../';</script>";
-                } else return 0;
+                } else
+                    return 0;
             }
         }
     }
@@ -45,11 +46,25 @@ class mLogin
         }
     }
 
+    public function mSignup($username, $phone, $email, $loginname, $password, $address, $customerType)
+    {
+        $db = new tmdt();
+        $conn = $db->connect();
+        $password = md5($password);
+        $sql = "INSERT INTO `customer` (customerName, phoneNumber, email, loginName, password, address, customerType) VALUES ('$username', '$phone', '$email', '$loginname', '$password', '$address', $customerType)";
+        $result = $conn->query($sql);
+
+        if (!$result)
+            return false;
+        else
+            return true;
+    }
+
     public function mLogout($account, $url)
     {
         unset($account);
         session_destroy();
-        echo "<script>window.location.href='".$url."';</script>";
+        echo "<script>window.location.href='" . $url . "';</script>";
     }
 }
 ?>
