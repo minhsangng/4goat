@@ -106,7 +106,7 @@ else
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link " href="index.php?p=product" id="product">
+          <a class="nav-link <?= ($_SESSION["user"][2] != 1 ? 'hover:cursor-not-allowed hover:text-gray-400!' : ''); ?>" href="<?= ($_SESSION["user"][2] != 1 ? 'javascript:void(0);' : 'index.php?p=product'); ?>" id="product">
             <div
               class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="fa-solid fa-shirt text-dark text-sm opacity-10"></i>

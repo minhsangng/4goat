@@ -58,7 +58,7 @@ if (isset($_POST["done"])) {
                             <label for="userid" class="text-base! font-bold!">User ID</label>
                         </td>
                         <td>
-                            <input type="text" name="userid" id="userid" required value="<?= $_SESSION["user"][2] ?>"
+                            <input type="text" name="userid" id="userid" required value="<?= $_SESSION["user"][2]." - ".$_SESSION["user"][0] ?>"
                                 class="px-3 py-2 mb-4 rounded-md w-full outline-none border-2 border-[#8c907e]">
                         </td>
                     </tr>

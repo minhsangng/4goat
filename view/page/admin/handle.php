@@ -4,11 +4,11 @@
             class="table-responsive mb-lg-0 mb-4 px-2 bg-white flex justify-center items-center space-x-14 rounded-2xl">
             <a class="px-4 py-6 text-gray-600! no-underline! hover:not-focus:scale-110 transition ease-linear border-2 border-[#DDD] rounded-md text-2xl flex flex-col justify-center items-center"
                 href="pos.php"><i class="mb-3 fa-solid fa-cart-plus"></i>Tạo đơn hàng</a>
-            <a class="px-4 py-6 text-gray-600! no-underline! hover:not-focus:scale-110 transition ease-linear border-2 border-[#DDD] rounded-md text-2xl flex flex-col justify-center items-center"
-                href="" <?php echo ($_SESSION["user"][2] == 1 ? 'data-bs-target="#editModal" data-bs-toggle="modal"' : '');?>><i
+            <a class="px-4 py-6 text-gray-600! no-underline! hover:not-focus:scale-110 transition ease-linear border-2 border-[#DDD] rounded-md text-2xl flex flex-col justify-center items-center <?= ($_SESSION["user"][2] != 1 ? 'hover:cursor-not-allowed hover:text-gray-400!' : ''); ?>"
+                href="" data-bs-target="#editModal" data-bs-toggle="modal"><i
                     class="mb-3 fa-solid fa-screwdriver"></i>Sửa đơn hàng</a>
-            <a class="px-4 py-6 text-gray-600! no-underline! hover:not-focus:scale-110 transition ease-linear border-2 border-[#DDD] rounded-md text-2xl flex flex-col justify-center items-center"
-                href="" <?php echo ($_SESSION["user"][2] == 1 ? 'data-bs-target="#delModal" data-bs-toggle="modal"' : ''); ?>><i class="mb-3 fa-solid fa-eraser"></i>Xoá đơn
+            <a class="px-4 py-6 text-gray-600! no-underline! hover:not-focus:scale-110 transition ease-linear border-2 border-[#DDD] rounded-md text-2xl flex flex-col justify-center items-center <?= ($_SESSION["user"][2] != 1 ? 'hover:cursor-not-allowed hover:text-gray-400!' : ''); ?>"
+                href="" data-bs-target="#delModal" data-bs-toggle="modal"><i class="mb-3 fa-solid fa-eraser"></i>Xoá đơn
                 hàng</a>
         </div>
     </div>
